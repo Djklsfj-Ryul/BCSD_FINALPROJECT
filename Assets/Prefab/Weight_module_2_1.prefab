@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4494069143259869845}
   - component: {fileID: -5914136698474770595}
   m_Layer: 0
-  m_Name: Weight_module_2
+  m_Name: Weight_module_2_1
   m_TagString: OBJECT
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452998139349816129}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.556681, y: 32.4, z: 4.2585726}
+  m_LocalPosition: {x: 0, y: 32.4, z: 0}
   m_LocalScale: {x: 3, y: 2, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
