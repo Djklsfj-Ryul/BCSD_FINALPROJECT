@@ -5,22 +5,25 @@ using UnityEngine;
 [System.Serializable]
 public class Respawn : MonoBehaviour
 {
-    static int Catridge_Big = 2;
+    static int Catridge_Big    = 2;
     static int Catridge_Medium = 2;
-    static int Catridge_Small = 1;
+    static int Catridge_Small  = 1;
+    static int Catridge_Enemy  = 1;
     [SerializeField]
-    static int Count_Big = 1;
+    static int Count_Big    = 1;
     [SerializeField]
     static int Count_Medium = 2;
     [SerializeField]
-    static int Count_Small = 3;
+    static int Count_Small  = 3;
+    [SerializeField]
+    static int Count_Enemy = 1;
 
-    public GameObject[] Object_Big = new GameObject[Catridge_Big];
+    public GameObject[] Object_Big    = new GameObject[Catridge_Big];
     public GameObject[] Object_Medium = new GameObject[Catridge_Medium];
-    public GameObject[] Object_Small = new GameObject[Catridge_Small];
+    public GameObject[] Object_Small  = new GameObject[Catridge_Small];
+    public GameObject[] Object_Enemy  = new GameObject[Catridge_Enemy];
     public GameObject Object_Ground;
     BoxCollider Range_Collider;
-
 
     static int MAP_X = 20;
     static int MAP_Z = 20;
@@ -29,7 +32,7 @@ public class Respawn : MonoBehaviour
     int range_X = 0;
     int range_Z = 0;
 
-    bool[] Trigger = new bool[] { true, true, true };
+    bool[] Trigger = new bool[] { true, true, true, true };
 
     private void Awake()
     {
@@ -41,7 +44,65 @@ public class Respawn : MonoBehaviour
         Making_Map();
         StartCoroutine(Random_Respawn());
     }
+    IEnumerator Random_Respawn()
+    {
+        while (Trigger[3] == true)
+        {
+            //1초마다 랜덤으로 생성하도록 설정
+            //추후 매페이즈 마다 생성하도록 트리거를 넣을 예정
 
+            if (Trigger[0] == true)
+            {
+                for (int i = 0; i < Count_Big; i++)
+                {
+                    int a = Random.Range(0, Catridge_Big);
+                    GameObject Instant_Big = Instantiate(Object_Big[a], Return_RandomPosition(), Quaternion.identity);
+                    yield return new WaitForSeconds(1f);
+                }
+                Trigger[0] = false;
+            }
+            else if (Trigger[1] == true)
+            {
+                for (int i = 0; i < Count_Medium; i++)
+                {
+                    int b = Random.Range(0, Catridge_Medium);
+                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Return_RandomPosition(), Quaternion.identity);
+                    yield return new WaitForSeconds(1f);
+                }
+                Trigger[1] = false;
+            }
+            else if (Trigger[2] == true)
+            {
+                for (int i = 0; i < Count_Small; i++)
+                {
+                    int c = Random.Range(0, Catridge_Small);
+                    GameObject Instant_Small = Instantiate(Object_Small[c], Return_RandomPosition(), Quaternion.identity);
+                    yield return new WaitForSeconds(1f);
+                }
+                Trigger[2] = false;
+            }
+            else if (Trigger[3] == true)
+            {
+                for (int i = 0; i < Count_Enemy; i++)
+                {
+                    int d = Random.Range(0, Catridge_Enemy);
+                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), Quaternion.identity);
+                }
+                Trigger[3] = false;
+            }
+        }
+        //로그로 맵 확인
+        string a1 = "";
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                a1 = a1 + MAP[j,i];
+            }
+            Debug.Log(a1);
+            a1 = "";
+        }
+    }
     public Vector3 Return_RandomPosition()
     {
         Vector3 Pos = Object_Ground.transform.position;
@@ -55,56 +116,6 @@ public class Respawn : MonoBehaviour
         Vector3 respawnPosition = Pos + RandomPostion;
         respawnPosition = Pointing(respawnPosition);
         return respawnPosition;
-    }
-
-    IEnumerator Random_Respawn()
-    {
-        while (Trigger[2] == true)
-        {
-            //1초마다 랜덤으로 생성하도록 설정
-            //추후 매페이즈 마다 생성하도록 트리거를 넣을 예정
-
-            if (Trigger[0] == true)
-            {
-                int a = Random.Range(0, Catridge_Big);
-                for (int i = 0; i < Count_Big; i++)
-                {
-                    GameObject Instant_Big = Instantiate(Object_Big[a], Return_RandomPosition(), Quaternion.identity);
-                    yield return new WaitForSeconds(1f);
-                }
-                Trigger[0] = false;
-            }
-            else if (Trigger[1] == true)
-            {
-                int b = Random.Range(0, Catridge_Medium);
-                for (int i = 0; i < Count_Medium; i++)
-                {
-                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Return_RandomPosition(), Quaternion.identity);
-                    yield return new WaitForSeconds(1f);
-                }
-                Trigger[1] = false;
-            }
-            else if (Trigger[2] == true)
-            {
-                int c = Random.Range(0, Catridge_Small);
-                for (int i = 0; i < Count_Small; i++)
-                {
-                    GameObject Instant_Small = Instantiate(Object_Small[c], Return_RandomPosition(), Quaternion.identity);
-                    yield return new WaitForSeconds(1f);
-                }
-                Trigger[2] = false;
-            }
-        }
-        string a1 = "";
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-                a1 = a1 + MAP[j,i];
-            }
-            Debug.Log(a1);
-            a1 = "";
-        }
     }
     Vector3 Pointing(Vector3 RS_Pos)
     {
@@ -128,11 +139,11 @@ public class Respawn : MonoBehaviour
                         {
                             if (i == 0 && j == 0)
                             {
-                                MAP[z , x] = 2;
+                                MAP[z , x] = 8;
                             }
                             else
                             {
-                                MAP[z + j, x + i] = 1;
+                                MAP[z + j, x + i] = 7;
                             }
                         }
                     }
@@ -151,7 +162,7 @@ public class Respawn : MonoBehaviour
             {
                 for (int i = -1; i < 2; i++)
                 {
-                    if ((x + i <= 0 || z + j <= 0 || x + i >= 19 || z + j >= 19) || (MAP[z + j, x + i] == 1 || MAP[z + j, x + i] == 2 || MAP[z + j, x + i] == 9))
+                    if ((x + i <= 0 || z + j <= 0 || x + i >= 19 || z + j >= 19) || (MAP[z + j, x + i] == 7 || MAP[z + j, x + i] == 8 || MAP[z + j, x + i] == 9))
                     {
                         x = Random.Range(1, (MAP_X - 2));
                         z = Random.Range(1, (MAP_Z - 2));
@@ -165,11 +176,11 @@ public class Respawn : MonoBehaviour
                 {
                     if (i == 0 && j == 0)
                     {
-                        MAP[z, x] = 2;
+                        MAP[z, x] = 8;
                     }
                     else
                     {
-                        MAP[z + j, x + i] = 1;
+                        MAP[z + j, x + i] = 7;
                     }
                 }
             }
@@ -182,7 +193,7 @@ public class Respawn : MonoBehaviour
         {
             while (true)
             {
-                if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 1 || MAP[z, x] == 2 || MAP[z, x] == 9))
+                if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 7 || MAP[z, x] == 8 || MAP[z, x] == 9))
                 {
                     x = Random.Range(1, (MAP_X - 2));
                     z = Random.Range(1, (MAP_Z - 2));
@@ -190,7 +201,28 @@ public class Respawn : MonoBehaviour
                 }
                 else
                 {
-                    MAP[z, x] = 2;
+                    MAP[z, x] = 8;
+                }
+                break;
+            }
+            RS_Pos.x = x;
+            RS_Pos.z = z;
+
+            return RS_Pos;
+        }
+        else if (Trigger[3] == true)
+        {
+            while (true)
+            {
+                if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 7 || MAP[z, x] == 8 || MAP[z, x] == 9))
+                {
+                    x = Random.Range(1, (MAP_X - 2));
+                    z = Random.Range(1, (MAP_Z - 2));
+                    continue;
+                }
+                else
+                {
+                    MAP[z, x] = 9;
                 }
                 break;
             }
@@ -229,7 +261,7 @@ public class Respawn : MonoBehaviour
         {
             for (int j = 0; j < MAP_X; j++)
             {
-                if (j == 0 || j == (MAP_X - 1) || i == 0 || i == (MAP_Z - 1)) MAP[i, j] = 3;
+                if (j == 0 || j == (MAP_X - 1) || i == 0 || i == (MAP_Z - 1)) MAP[i, j] = 9;
                 else MAP[i, j] = 0;
             }
         }
