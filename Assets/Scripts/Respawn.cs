@@ -2,37 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public class Respawn : MonoBehaviour
 {
-    static int Catridge_Big    = 2;
-    static int Catridge_Medium = 2;
-    static int Catridge_Small  = 1;
-    static int Catridge_Enemy  = 1;
-    [SerializeField]
-    static int Count_Big    = 1;
-    [SerializeField]
-    static int Count_Medium = 2;
-    [SerializeField]
-    static int Count_Small  = 3;
-    [SerializeField]
-    static int Count_Enemy = 1;
+    protected delegate int[,] POINTING();
 
-    public GameObject[] Object_Big    = new GameObject[Catridge_Big];
-    public GameObject[] Object_Medium = new GameObject[Catridge_Medium];
-    public GameObject[] Object_Small  = new GameObject[Catridge_Small];
-    public GameObject[] Object_Enemy  = new GameObject[Catridge_Enemy];
-    public GameObject Object_Ground;
+    static protected int Catridge_Big    = 2;
+    static protected int Catridge_Medium = 2;
+    static protected int Catridge_Small  = 1;
+    static protected int Catridge_Enemy  = 1;
+    [SerializeField]
+    static protected int Count_Big    = 1;
+    [SerializeField]
+    static protected int Count_Medium = 2;
+    [SerializeField]
+    static protected int Count_Small  = 3;
+    [SerializeField]
+    static protected int Count_Enemy = 1;
+
+    [SerializeField]
+    private GameObject[] Object_Big    = new GameObject[Catridge_Big];
+    [SerializeField]
+    private GameObject[] Object_Medium = new GameObject[Catridge_Medium];
+    [SerializeField]
+    private GameObject[] Object_Small  = new GameObject[Catridge_Small];
+    [SerializeField]
+    private GameObject[] Object_Enemy  = new GameObject[Catridge_Enemy];
+    [SerializeField]
+    private GameObject Object_Ground;
     BoxCollider Range_Collider;
 
     static int MAP_X = 20;
     static int MAP_Z = 20;
-    int[,] MAP = new int[MAP_X,MAP_Z];
+    protected int[,] MAP = new int[MAP_X, MAP_Z];
 
     int range_X = 0;
     int range_Z = 0;
+    private Vector3 RandomPostion = new Vector3(0f, 5.0f, 0f);
 
-    bool[] Trigger = new bool[] { true, true, true, true };
+    protected bool[] Trigger = new bool[] { true, true, true, true };
 
     private void Awake()
     {
@@ -43,6 +50,7 @@ public class Respawn : MonoBehaviour
     {
         Making_Map();
         StartCoroutine(Random_Respawn());
+
     }
     IEnumerator Random_Respawn()
     {
@@ -97,23 +105,14 @@ public class Respawn : MonoBehaviour
                     int d = Random.Range(0, Catridge_Enemy);
                     int rand_d = Random.Range(1, 5);
                     rand_d *= 90;
-                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_d, 0));
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
                     GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), quaternion);
+                    yield return new WaitForSeconds(1f);
                 }
                 Trigger[3] = false;
             }
         }
-        //로그로 맵 확인
-        string a1 = "";
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-                a1 = a1 + MAP[j,i];
-            }
-            Debug.Log(a1);
-            a1 = "";
-        }
+        //POINTING point = new POINTING(Overriding_Map);
     }
     public Vector3 Return_RandomPosition()
     {
@@ -123,7 +122,7 @@ public class Respawn : MonoBehaviour
 
         range_X = Random.Range(1, (MAP_X - 2));
         range_Z = Random.Range(1, (MAP_Z - 2));
-        Vector3 RandomPostion = new Vector3(range_X, 5.0f, range_Z);
+        RandomPostion = new Vector3(range_X, 5.0f, range_Z);
 
         Vector3 respawnPosition = Pos + RandomPostion;
         respawnPosition = Pointing(respawnPosition);
@@ -262,6 +261,19 @@ public class Respawn : MonoBehaviour
      * 10000000011100000001
      * 11111111111111111111
      */
+    //로그로 맵 확인
+    /*
+    string a1 = "";
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 20; j++)
+        {
+            a1 = a1 + MAP[j,i];
+        }
+        Debug.Log(a1);
+        a1 = "";
+    }
+    */
     void Making_Map()
     {
         for (int i = 0; i < MAP_Z; i++)
@@ -272,5 +284,9 @@ public class Respawn : MonoBehaviour
                 else MAP[i, j] = 0;
             }
         }
+    }
+    protected int[,] Overriding_Map()
+    {
+        return MAP;
     }
 }
