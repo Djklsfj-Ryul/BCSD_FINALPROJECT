@@ -56,7 +56,10 @@ public class Respawn : MonoBehaviour
                 for (int i = 0; i < Count_Big; i++)
                 {
                     int a = Random.Range(0, Catridge_Big);
-                    GameObject Instant_Big = Instantiate(Object_Big[a], Return_RandomPosition(), Quaternion.identity);
+                    int rand_a = Random.Range(1, 5);
+                    rand_a *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
+                    GameObject Instant_Big = Instantiate(Object_Big[a], Return_RandomPosition(), quaternion);
                     yield return new WaitForSeconds(1f);
                 }
                 Trigger[0] = false;
@@ -66,7 +69,10 @@ public class Respawn : MonoBehaviour
                 for (int i = 0; i < Count_Medium; i++)
                 {
                     int b = Random.Range(0, Catridge_Medium);
-                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Return_RandomPosition(), Quaternion.identity);
+                    int rand_b = Random.Range(1, 5);
+                    rand_b *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
+                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Return_RandomPosition(), quaternion);
                     yield return new WaitForSeconds(1f);
                 }
                 Trigger[1] = false;
@@ -76,7 +82,10 @@ public class Respawn : MonoBehaviour
                 for (int i = 0; i < Count_Small; i++)
                 {
                     int c = Random.Range(0, Catridge_Small);
-                    GameObject Instant_Small = Instantiate(Object_Small[c], Return_RandomPosition(), Quaternion.identity);
+                    int rand_c = Random.Range(1, 5);
+                    rand_c *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
+                    GameObject Instant_Small = Instantiate(Object_Small[c], Return_RandomPosition(), quaternion);
                     yield return new WaitForSeconds(1f);
                 }
                 Trigger[2] = false;
@@ -86,7 +95,10 @@ public class Respawn : MonoBehaviour
                 for (int i = 0; i < Count_Enemy; i++)
                 {
                     int d = Random.Range(0, Catridge_Enemy);
-                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), Quaternion.identity);
+                    int rand_d = Random.Range(1, 5);
+                    rand_d *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_d, 0));
+                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), quaternion);
                 }
                 Trigger[3] = false;
             }
@@ -123,33 +135,34 @@ public class Respawn : MonoBehaviour
         int z = (int)RS_Pos.z; // 1 ~ 18
         if (Trigger[0] == true)
         {
-            while (true)
+        BACK_1:
+            for (int j = -2; j < 3; j++)
+            {
+                for (int i = -2; i < 3; i++)
+                {
+                    if (x + i <= 0 || z + j <= 0 || x + i >= 19 || z + j >= 19)
+                    {
+                        x = Random.Range(1, (MAP_X - 2));
+                        z = Random.Range(1, (MAP_Z - 2));
+                        goto BACK_1;
+                    }
+                }
+            }
+            for (int i = -2; i < 3; i++)
             {
                 for (int j = -2; j < 3; j++)
                 {
-                    for (int i = -2; i < 3; i++)
+                    if (i == 0 && j == 0)
                     {
-                        if (x + i <= 0 || z + j <= 0 || x + i >= 19 || z + j >= 19)
-                        {
-                            x = Random.Range(1, (MAP_X - 2));
-                            z = Random.Range(1, (MAP_Z - 2));
-                            continue;
-                        }
-                        else
-                        {
-                            if (i == 0 && j == 0)
-                            {
-                                MAP[z , x] = 8;
-                            }
-                            else
-                            {
-                                MAP[z + j, x + i] = 7;
-                            }
-                        }
+                        MAP[z, x] = 8;
+                    }
+                    else
+                    {
+                        MAP[z + j, x + i] = 7;
                     }
                 }
-                break;
             }
+
             RS_Pos.x = x;
             RS_Pos.z = z;
 
@@ -157,7 +170,7 @@ public class Respawn : MonoBehaviour
         }
         else if(Trigger[1]==true)
         {
-            BACK:
+        BACK_2:
             for (int j = -1; j < 2; j++)
             {
                 for (int i = -1; i < 2; i++)
@@ -166,7 +179,7 @@ public class Respawn : MonoBehaviour
                     {
                         x = Random.Range(1, (MAP_X - 2));
                         z = Random.Range(1, (MAP_Z - 2));
-                        goto BACK;
+                        goto BACK_2;
                     }
                 }
             }
@@ -191,19 +204,16 @@ public class Respawn : MonoBehaviour
         }
         else if (Trigger[2] == true)
         {
-            while (true)
+        BACK_3:
+            if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 7 || MAP[z, x] == 8 || MAP[z, x] == 9))
             {
-                if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 7 || MAP[z, x] == 8 || MAP[z, x] == 9))
-                {
-                    x = Random.Range(1, (MAP_X - 2));
-                    z = Random.Range(1, (MAP_Z - 2));
-                    continue;
-                }
-                else
-                {
-                    MAP[z, x] = 8;
-                }
-                break;
+                x = Random.Range(1, (MAP_X - 2));
+                z = Random.Range(1, (MAP_Z - 2));
+                goto BACK_3;
+            }
+            else
+            {
+                MAP[z, x] = 8;
             }
             RS_Pos.x = x;
             RS_Pos.z = z;
@@ -212,19 +222,16 @@ public class Respawn : MonoBehaviour
         }
         else if (Trigger[3] == true)
         {
-            while (true)
+        BACK_4:
+            if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 7 || MAP[z, x] == 8 || MAP[z, x] == 9))
             {
-                if ((x <= 0 || z <= 0 || x >= 19 || z >= 19) || (MAP[z, x] == 7 || MAP[z, x] == 8 || MAP[z, x] == 9))
-                {
-                    x = Random.Range(1, (MAP_X - 2));
-                    z = Random.Range(1, (MAP_Z - 2));
-                    continue;
-                }
-                else
-                {
-                    MAP[z, x] = 9;
-                }
-                break;
+                x = Random.Range(1, (MAP_X - 2));
+                z = Random.Range(1, (MAP_Z - 2));
+                goto BACK_4;
+            }
+            else
+            {
+                MAP[z, x] = 9;
             }
             RS_Pos.x = x;
             RS_Pos.z = z;
