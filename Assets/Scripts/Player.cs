@@ -4,49 +4,83 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private int posx = 0;
+    private int posy = 0;
+    private int posz = 0;
+
+    bool Pick = false;
+    RaycastHit hit;
+
+    GameObject PickUpObject;
     private Respawn_Player therespawn;
     void Start()
     {
         therespawn = FindObjectOfType<Respawn_Player>();
+
     }
     void Update()
     {
-        Player_Move(therespawn.MAP);
+        Player_Move();
+        Pick_Up();
     }
-    void Player_Move(int[,] MAP)
+    void Player_Move()
     {
-        int posx = (int)gameObject.transform.position.x;
-        int posy = (int)gameObject.transform.position.y;
-        int posz = (int)gameObject.transform.position.z;
+        posx = (int)gameObject.transform.position.x;
+        posy = (int)gameObject.transform.position.y;
+        posz = (int)gameObject.transform.position.z;
         int angle = (int)gameObject.transform.rotation.eulerAngles.y;
 
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            string a1 = ""; 
-            for (int i = 0; i < 20; i++) 
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    a1 = a1 + MAP[j, i];
-                }
-                Debug.Log(a1);
-                a1 = "";
-            }
+            therespawn.MAP[posz, posx] = 0;
             switch (angle)
             {
                 case 0:
-                    gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                    if (Object_Check(posx, posz, 1, 0))
+                    {
+                        if (Pick)
+                        {
+                            PickUpObject.transform.position = new Vector3(posx + 1, posy + 2.5f, posz);
+                        }
+                        gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                        posx++;
+                    }
                     break;
                 case 90:
-                    gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                    if (Object_Check(posx, posz, 0, -1))
+                    {
+                        if (Pick)
+                        {
+                            PickUpObject.transform.position = new Vector3(posx, posy + 2.5f, posz - 1);
+                        }
+                        gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                        posz--;
+                    }
                     break;
                 case 180:
-                    gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                    if (Object_Check(posx, posz, -1, 0))
+                    {
+                        if (Pick)
+                        {
+                            PickUpObject.transform.position = new Vector3(posx - 1, posy + 2.5f, posz);
+                        }
+                        gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                        posx--;
+                    } 
                     break;
                 case 270:
-                    gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                    if (Object_Check(posx, posz, 0, 1))
+                    {
+                        if (Pick)
+                        {
+                            PickUpObject.transform.position = new Vector3(posx, posy + 2.5f, posz + 1);
+                        }
+                        gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                        posz++;
+                    }
                     break;
             }
+            therespawn.MAP[posz, posx] = 9;
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -55,6 +89,29 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D))
         {
             gameObject.transform.Rotate(0, 90, 0);
+        }
+    }
+    bool Object_Check(int posx, int posz, int var_x, int var_y)
+    {
+        Debug.Log(posz + "," + posx);
+        Debug.Log(var_y + "," + var_x);
+
+        if (therespawn.MAP[posz + var_y, posx + var_x] == 0)
+            return true;
+        else
+            return false;
+
+    }
+    void Pick_Up()
+    {
+        Debug.DrawRay(gameObject.transform.position, gameObject.transform.right * 10, Color.red);
+        if(Physics.Raycast(gameObject.transform.position, gameObject.transform.right, out hit, 1.0f) && Input.GetKeyDown(KeyCode.Space))
+        {
+            Pick = true;
+            PickUpObject = hit.transform.gameObject;
+            Debug.Log(PickUpObject);
+            hit.transform.gameObject.GetComponent<Transform>().transform.position = new Vector3(posx, posy+2.5f, posz);
+            hit.transform.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
     }
 }
