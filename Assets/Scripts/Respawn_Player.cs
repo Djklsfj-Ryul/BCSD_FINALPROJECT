@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class Respawn_Player : MonoBehaviour
 {
-    protected delegate int[,] POINTING();
-
-    public int Catridge_Big = 2;
-    public int Catridge_Medium = 2;
-    public int Catridge_Small = 1;
+    static public int Catridge_Big = 2;
+    static public int Catridge_Medium = 2;
+    static public int Catridge_Small = 1;
     static public int Catridge_Enemy = 1;
     [SerializeField]
     static protected int Count_Big = 1;

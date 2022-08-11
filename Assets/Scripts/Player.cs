@@ -12,11 +12,10 @@ public class Player : MonoBehaviour
     RaycastHit hit;
 
     GameObject PickUpObject;
-    private Respawn_Player therespawn;
+    private static Respawn_Player therespawn;
     void Start()
     {
         therespawn = FindObjectOfType<Respawn_Player>();
-
     }
     void Update()
     {
@@ -109,31 +108,50 @@ public class Player : MonoBehaviour
         {
             Pick = true;
             PickUpObject = hit.transform.gameObject;
-            
-            Debug.Log(PickUpObject);
-            Find();
+
+            Remove();
 
             PickUpObject.GetComponent<Transform>().transform.position = new Vector3(posx, posy+2.5f, posz);
-            PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationY;
         }
     }
-    void Find()
+    void Remove()
     {
-        for (int i = 0; i < therespawn.Catridge_Big; i++)
-        {
-            if (PickUpObject == therespawn.Object_Big[i])
-                for (int dimension = 1; dimension <= therespawn.MAP.Rank; dimension++)
-                    Console.WriteLine("   Dimension {0}: {1,3}", dimension, therespawn.MAP.GetUpperBound(dimension - 1) + 1);
-            therespawn.MAP[]
-        }
-        for (int i = 0; i < therespawn.Catridge_Medium; i++)
-        {
-            if (PickUpObject == therespawn.Object_Medium[i])
-        }
-        for (int i = 0; i < therespawn.Catridge_Small; i++)
-        {
-            if (PickUpObject == therespawn.Object_Small[i])
+        int y = therespawn.MAP.GetLength(0);
+        int x = therespawn.MAP.GetLength(1);
 
+        for (int i = 0; i < Respawn_Player.Catridge_Big; i++)
+        {
+            if (PickUpObject.name == therespawn.Object_Big[i].name + "(Clone)")
+            {
+                for (int dy = -2; dy < 3; dy++)
+                {
+                    for (int dx = -2; dx < 3; dx++)
+                    {
+                        therespawn.MAP[(int)PickUpObject.transform.position.z + dy, (int)PickUpObject.transform.position.x + dx] = 0;
+                    }
+                }
+            } 
+        }
+        for (int i = 0; i < Respawn_Player.Catridge_Medium; i++)
+        {
+            if (PickUpObject.name == therespawn.Object_Medium[i].name + "(Clone)")
+            {
+                for (int dy = -1; dy < 2; dy++)
+                {
+                    for (int dx = -1; dx < 2; dx++)
+                    {
+                        therespawn.MAP[(int)PickUpObject.transform.position.z + dy, (int)PickUpObject.transform.position.x + dx] = 0;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < Respawn_Player.Catridge_Small; i++)
+        {
+            if (PickUpObject.name == therespawn.Object_Small[i].name + "(Clone)")
+            {
+                therespawn.MAP[(int)PickUpObject.transform.position.z, (int)PickUpObject.transform.position.x] = 0;
+            }
         }
     }
 }
