@@ -84,10 +84,18 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             gameObject.transform.Rotate(0,-90,0);
+            if(Pick)
+            {
+                PickUpObject.transform.Rotate(0,-90,0);
+            }
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
             gameObject.transform.Rotate(0, 90, 0);
+            if (Pick)
+            {
+                PickUpObject.transform.Rotate(0, +90, 0);
+            }
         }
     }
     bool Object_Check(int posx, int posz, int var_x, int var_y)
@@ -109,13 +117,16 @@ public class Player : MonoBehaviour
             Pick = true;
             PickUpObject = hit.transform.gameObject;
 
-            Remove();
+            Remove_Point();
 
             PickUpObject.GetComponent<Transform>().transform.position = new Vector3(posx, posy+2.5f, posz);
-            PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationY;
+            PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | 
+                                                                 RigidbodyConstraints.FreezeRotationX | 
+                                                                 RigidbodyConstraints.FreezeRotationZ | 
+                                                                 RigidbodyConstraints.FreezeRotationY;
         }
     }
-    void Remove()
+    void Remove_Point()
     {
         int y = therespawn.MAP.GetLength(0);
         int x = therespawn.MAP.GetLength(1);
