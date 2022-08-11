@@ -6,10 +6,10 @@ public class Respawn_Player : MonoBehaviour
 {
     protected delegate int[,] POINTING();
 
-    static protected int Catridge_Big = 2;
-    static protected int Catridge_Medium = 2;
-    static protected int Catridge_Small = 1;
-    static protected int Catridge_Enemy = 1;
+    public int Catridge_Big = 2;
+    public int Catridge_Medium = 2;
+    public int Catridge_Small = 1;
+    static public int Catridge_Enemy = 1;
     [SerializeField]
     static protected int Count_Big = 1;
     [SerializeField]
@@ -20,20 +20,20 @@ public class Respawn_Player : MonoBehaviour
     static protected int Count_Enemy = 1;
 
     [SerializeField]
-    private GameObject[] Object_Big = new GameObject[Catridge_Big];
+    public GameObject[] Object_Big = new GameObject[Catridge_Big];
     [SerializeField]
-    private GameObject[] Object_Medium = new GameObject[Catridge_Medium];
+    public GameObject[] Object_Medium = new GameObject[Catridge_Medium];
     [SerializeField]
-    private GameObject[] Object_Small = new GameObject[Catridge_Small];
+    public GameObject[] Object_Small = new GameObject[Catridge_Small];
     [SerializeField]
-    private GameObject[] Object_Enemy = new GameObject[Catridge_Enemy];
+    public GameObject[] Object_Enemy = new GameObject[Catridge_Enemy];
     [SerializeField]
     private GameObject Object_Ground;
     BoxCollider Range_Collider;
 
-    static int MAP_X = 20;
-    static int MAP_Z = 20;
-    public int[,] MAP = new int[MAP_X, MAP_Z];
+    static public int MAP_X = 20;
+    static public int MAP_Z = 20;
+    public int[,] MAP = new int[MAP_Z, MAP_X];
 
     int range_X = 0;
     int range_Z = 0;

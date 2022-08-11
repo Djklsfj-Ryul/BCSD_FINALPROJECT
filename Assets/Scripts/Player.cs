@@ -109,9 +109,31 @@ public class Player : MonoBehaviour
         {
             Pick = true;
             PickUpObject = hit.transform.gameObject;
+            
             Debug.Log(PickUpObject);
-            hit.transform.gameObject.GetComponent<Transform>().transform.position = new Vector3(posx, posy+2.5f, posz);
-            hit.transform.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            Find();
+
+            PickUpObject.GetComponent<Transform>().transform.position = new Vector3(posx, posy+2.5f, posz);
+            PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+    }
+    void Find()
+    {
+        for (int i = 0; i < therespawn.Catridge_Big; i++)
+        {
+            if (PickUpObject == therespawn.Object_Big[i])
+                for (int dimension = 1; dimension <= therespawn.MAP.Rank; dimension++)
+                    Console.WriteLine("   Dimension {0}: {1,3}", dimension, therespawn.MAP.GetUpperBound(dimension - 1) + 1);
+            therespawn.MAP[]
+        }
+        for (int i = 0; i < therespawn.Catridge_Medium; i++)
+        {
+            if (PickUpObject == therespawn.Object_Medium[i])
+        }
+        for (int i = 0; i < therespawn.Catridge_Small; i++)
+        {
+            if (PickUpObject == therespawn.Object_Small[i])
+
         }
     }
 }
