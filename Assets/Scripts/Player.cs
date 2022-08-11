@@ -2,36 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Respawn
+public class Player : MonoBehaviour
 {
-    new void Start()
+    private Respawn_Player therespawn;
+    void Start()
     {
-        POINTING point = new POINTING(Overriding_Map);
-        MAP = point();
-        string a1 = "";
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-                a1 = a1 + MAP[j, i];
-            }
-            Debug.Log(a1);
-            a1 = "";
-        }
+        therespawn = FindObjectOfType<Respawn_Player>();
     }
     void Update()
     {
-        Player_Move();
+        Player_Move(therespawn.MAP);
     }
-    void Player_Move()
+    void Player_Move(int[,] MAP)
     {
         int posx = (int)gameObject.transform.position.x;
         int posy = (int)gameObject.transform.position.y;
         int posz = (int)gameObject.transform.position.z;
         int angle = (int)gameObject.transform.rotation.eulerAngles.y;
 
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W)) 
         {
+            string a1 = ""; 
+            for (int i = 0; i < 20; i++) 
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    a1 = a1 + MAP[j, i];
+                }
+                Debug.Log(a1);
+                a1 = "";
+            }
             switch (angle)
             {
                 case 0:

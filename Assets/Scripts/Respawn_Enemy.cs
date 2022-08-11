@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Respawn : MonoBehaviour
+public class Respawn_Enemy : MonoBehaviour
 {
     protected delegate int[,] POINTING();
 
@@ -33,7 +33,7 @@ public class Respawn : MonoBehaviour
 
     static int MAP_X = 20;
     static int MAP_Z = 20;
-    protected int[,] MAP = new int[MAP_X, MAP_Z];
+    public int[,] MAP = new int[MAP_X, MAP_Z];
 
     int range_X = 0;
     int range_Z = 0;
@@ -112,7 +112,7 @@ public class Respawn : MonoBehaviour
                 Trigger[3] = false;
             }
         }
-        //POINTING point = new POINTING(Overriding_Map);
+        
     }
     public Vector3 Return_RandomPosition()
     {
