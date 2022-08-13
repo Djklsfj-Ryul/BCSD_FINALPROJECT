@@ -143,7 +143,7 @@ public class Player : MonoBehaviour
         {
             if (PickUpObject.name == therespawn.Object_Big[i].name + "(Clone)")
             {
-                Point(3);
+                Point(3,5);
                 Pick = false;
             }
         }
@@ -152,7 +152,7 @@ public class Player : MonoBehaviour
         {
             if (PickUpObject.name == therespawn.Object_Medium[i].name + "(Clone)")
             {
-                Point(2);
+                Point(2,3);
                 Pick = false;
             }
         }
@@ -160,7 +160,7 @@ public class Player : MonoBehaviour
         {
             if (PickUpObject.name == therespawn.Object_Small[i].name + "(Clone)")
             {
-                Point(1);
+                Point(1,1);
                 Pick = false;
             }
         }
@@ -201,7 +201,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-    void Point(int num)
+    void Point(int num, int large)
     {
         int angle = (int)gameObject.transform.rotation.eulerAngles.y;
         int x = (int)gameObject.transform.position.x;
@@ -223,7 +223,7 @@ public class Player : MonoBehaviour
                         }
                     }
                 }
-                if (check == (num * num))
+                if (check == (large * large))
                     for (int dy = -(num - 1); dy < num; dy++)
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
@@ -247,7 +247,7 @@ public class Player : MonoBehaviour
                         }
                     }
                 }
-                if (check == (num * num))
+                if (check == (large * large))
                     for (int dy = -(num - 1); dy < num; dy++)
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
@@ -271,7 +271,7 @@ public class Player : MonoBehaviour
                         }
                     }
                 }
-                if (check == (num * num))
+                if (check == (large * large))
                     for (int dy = -(num - 1); dy < num; dy++)
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
@@ -280,7 +280,7 @@ public class Player : MonoBehaviour
                             else                    therespawn.MAP[z + dy, x + dx - num] = 7;
                         }
                     }
-                PickUpObject.transform.position = new Vector3(x + num, y, z);
+                PickUpObject.transform.position = new Vector3(x - num, y, z);
                 break;
             case 270:
                 for (int dy = -(num - 1); dy < num; dy++)
@@ -295,7 +295,7 @@ public class Player : MonoBehaviour
                         }
                     }
                 }
-                if (check == (num * num))
+                if (check == (large * large))
                     for (int dy = -(num - 1); dy < num; dy++)
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
@@ -315,7 +315,7 @@ public class Player : MonoBehaviour
         {
             for (int j = 0; j < 20; j++)
             {
-                a1 = a1 + therespawn.MAP[j, i];
+                a1 = a1 +   therespawn.MAP[j, i];
             }
             Debug.Log(a1);
             a1 = "";
