@@ -134,7 +134,63 @@ public class Player : MonoBehaviour
     }
     void Pick_Down()
     {
+        int x = (int)gameObject.transform.position.x;
+        int z = (int)gameObject.transform.position.z;
+        int angle = (int)gameObject.transform.rotation.eulerAngles.y;
+        bool[] Clear = new bool[] { true, true, true };
 
+
+        for (int i = 0; i < Respawn_Player.Catridge_Big; i++)
+        {
+            if (PickUpObject.name == therespawn.Object_Big[i].name + "(Clone)")
+            {
+                Check();
+                for (int dy = -2; dy < 3; dy++)
+                {
+                    for (int dx = -2; dx < 3; dx++)
+                    {
+                        if (therespawn.MAP[z + dy, x + dx] == 0)
+                        {
+                            Clear[0] = false;
+                        }
+                    }
+                }
+            }
+        }
+        if(!Clear[0])
+        {
+
+        }
+
+        for (int i = 0; i < Respawn_Player.Catridge_Medium; i++)
+        {
+            if (PickUpObject.name == therespawn.Object_Medium[i].name + "(Clone)")
+            {
+                for (int dy = -1; dy < 2; dy++)
+                {
+                    for (int dx = -1; dx < 2; dx++)
+                    {
+                        if (therespawn.MAP[z + dy, x + dx] == 0)
+                        {
+                            Clear[1] = false;
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < Respawn_Player.Catridge_Small; i++)
+        {
+            if (PickUpObject.name == therespawn.Object_Small[i].name + "(Clone)")
+            {
+                if (therespawn.MAP[z + dy, x + dx] == 0)
+                {
+                    Clear[2] = false;
+                }
+            }
+        }
+
+
+        Pick = false;
     }
     void Remove_Point()
     {
@@ -171,5 +227,9 @@ public class Player : MonoBehaviour
                 therespawn.MAP[(int)PickUpObject.transform.position.z, (int)PickUpObject.transform.position.x] = 0;
             }
         }
+    }
+    void Check()
+    {
+
     }
 }
