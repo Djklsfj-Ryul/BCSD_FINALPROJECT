@@ -136,7 +136,6 @@ public class Player : MonoBehaviour
     {
         int x = (int)gameObject.transform.position.x;
         int z = (int)gameObject.transform.position.z;
-        int angle = (int)gameObject.transform.rotation.eulerAngles.y;
         bool[] Clear = new bool[] { true, true, true };
 
 
@@ -144,53 +143,27 @@ public class Player : MonoBehaviour
         {
             if (PickUpObject.name == therespawn.Object_Big[i].name + "(Clone)")
             {
-                Check();
-                for (int dy = -2; dy < 3; dy++)
-                {
-                    for (int dx = -2; dx < 3; dx++)
-                    {
-                        if (therespawn.MAP[z + dy, x + dx] == 0)
-                        {
-                            Clear[0] = false;
-                        }
-                    }
-                }
+                Point(3);
+                Pick = false;
             }
-        }
-        if(!Clear[0])
-        {
-
         }
 
         for (int i = 0; i < Respawn_Player.Catridge_Medium; i++)
         {
             if (PickUpObject.name == therespawn.Object_Medium[i].name + "(Clone)")
             {
-                for (int dy = -1; dy < 2; dy++)
-                {
-                    for (int dx = -1; dx < 2; dx++)
-                    {
-                        if (therespawn.MAP[z + dy, x + dx] == 0)
-                        {
-                            Clear[1] = false;
-                        }
-                    }
-                }
+                Point(2);
+                Pick = false;
             }
         }
         for (int i = 0; i < Respawn_Player.Catridge_Small; i++)
         {
             if (PickUpObject.name == therespawn.Object_Small[i].name + "(Clone)")
             {
-                if (therespawn.MAP[z + dy, x + dx] == 0)
-                {
-                    Clear[2] = false;
-                }
+                Point(1);
+                Pick = false;
             }
         }
-
-
-        Pick = false;
     }
     void Remove_Point()
     {
@@ -228,8 +201,124 @@ public class Player : MonoBehaviour
             }
         }
     }
-    void Check()
+    void Point(int num)
     {
-
+        int angle = (int)gameObject.transform.rotation.eulerAngles.y;
+        int x = (int)gameObject.transform.position.x;
+        int z = (int)gameObject.transform.position.z;
+        int y = (int)gameObject.transform.position.y;
+        int check = 0;
+        switch (angle)
+        {
+            case 0:
+                for (int dy = -(num - 1); dy < num; dy++)
+                {
+                    for (int dx = -(num - 1); dx < num; dx++)
+                    {
+                        if (therespawn.MAP[z + dy, x + dx + num] == 0) check++;
+                        else
+                        {
+                            Debug.Log("Can't Pick Down");
+                            return;
+                        }
+                    }
+                }
+                if (check == (num * num))
+                    for (int dy = -(num - 1); dy < num; dy++)
+                    {
+                        for (int dx = -(num - 1); dx < num; dx++)
+                        {
+                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy, x + dx + num] = 8;
+                            else                    therespawn.MAP[z + dy, x + dx + num] = 7;
+                        }
+                    }
+                PickUpObject.transform.position = new Vector3(x + num,y,z);
+                break;
+            case 90:
+                for (int dy = -(num - 1); dy < num; dy++)
+                {
+                    for (int dx = -(num - 1); dx < num; dx++)
+                    {
+                        if (therespawn.MAP[z + dy - num, x + dx] == 0) check++;
+                        else
+                        {
+                            Debug.Log("Can't Pick Down");
+                            return;
+                        }
+                    }
+                }
+                if (check == (num * num))
+                    for (int dy = -(num - 1); dy < num; dy++)
+                    {
+                        for (int dx = -(num - 1); dx < num; dx++)
+                        {
+                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy - num, x + dx] = 8;
+                            else                    therespawn.MAP[z + dy - num, x + dx] = 7;
+                        }
+                    }
+                PickUpObject.transform.position = new Vector3(x, y, z - num);
+                break;
+            case 180:
+                for (int dy = -(num - 1); dy < num; dy++)
+                {
+                    for (int dx = -(num - 1); dx < num; dx++)
+                    {
+                        if (therespawn.MAP[z + dy - num, x + dx] == 0) check++;
+                        else
+                        {
+                            Debug.Log("Can't Pick Down");
+                            return;
+                        }
+                    }
+                }
+                if (check == (num * num))
+                    for (int dy = -(num - 1); dy < num; dy++)
+                    {
+                        for (int dx = -(num - 1); dx < num; dx++)
+                        {
+                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy, x + dx - num] = 8;
+                            else                    therespawn.MAP[z + dy, x + dx - num] = 7;
+                        }
+                    }
+                PickUpObject.transform.position = new Vector3(x + num, y, z);
+                break;
+            case 270:
+                for (int dy = -(num - 1); dy < num; dy++)
+                {
+                    for (int dx = -(num - 1); dx < num; dx++)
+                    {
+                        if (therespawn.MAP[z + dy - num, x + dx] == 0) check++;
+                        else
+                        {
+                            Debug.Log("Can't Pick Down");
+                            return;
+                        }
+                    }
+                }
+                if (check == (num * num))
+                    for (int dy = -(num - 1); dy < num; dy++)
+                    {
+                        for (int dx = -(num - 1); dx < num; dx++)
+                        {
+                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy + num, x + dx] = 8;
+                            else                    therespawn.MAP[z + dy + num, x + dx] = 7;
+                        }
+                    }
+                PickUpObject.transform.position = new Vector3(x, y, z + num);
+                break;
+        }
+        PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX |
+                                                             RigidbodyConstraints.FreezeRotationZ |
+                                                             RigidbodyConstraints.FreezeRotationY;
+        string a1 = "";
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                a1 = a1 + therespawn.MAP[j, i];
+            }
+            Debug.Log(a1);
+            a1 = "";
+        }
     }
 }
