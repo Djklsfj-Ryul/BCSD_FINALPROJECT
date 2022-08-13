@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //int y = therespawn.MAP.GetLength(0);
+    //int x = therespawn.MAP.GetLength(1);
+
     private int posx = 0;
     private int posy = 0;
     private int posz = 0;
@@ -20,7 +23,10 @@ public class Player : MonoBehaviour
     void Update()
     {
         Player_Move();
-        Pick_Up();
+        if (Input.GetKeyDown(KeyCode.Space) && !Pick)
+            Pick_Up();
+        else if (Input.GetKeyDown(KeyCode.Space) && Pick)
+            Pick_Down();
     }
     void Player_Move()
     {
@@ -112,7 +118,7 @@ public class Player : MonoBehaviour
     void Pick_Up()
     {
         Debug.DrawRay(gameObject.transform.position, gameObject.transform.right * 10, Color.red);
-        if(Physics.Raycast(gameObject.transform.position, gameObject.transform.right, out hit, 1.0f) && Input.GetKeyDown(KeyCode.Space))
+        if(Physics.Raycast(gameObject.transform.position, gameObject.transform.right, out hit, 1.0f))
         {
             Pick = true;
             PickUpObject = hit.transform.gameObject;
@@ -126,11 +132,12 @@ public class Player : MonoBehaviour
                                                                  RigidbodyConstraints.FreezeRotationY;
         }
     }
+    void Pick_Down()
+    {
+
+    }
     void Remove_Point()
     {
-        int y = therespawn.MAP.GetLength(0);
-        int x = therespawn.MAP.GetLength(1);
-
         for (int i = 0; i < Respawn_Player.Catridge_Big; i++)
         {
             if (PickUpObject.name == therespawn.Object_Big[i].name + "(Clone)")
