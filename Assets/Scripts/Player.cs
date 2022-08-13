@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    //int y = therespawn.MAP.GetLength(0);
-    //int x = therespawn.MAP.GetLength(1);
-
     private int posx = 0;
     private int posy = 0;
     private int posz = 0;
+    
 
     bool Pick = false;
     RaycastHit hit;

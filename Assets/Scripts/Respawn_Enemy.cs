@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Respawn_Enemy : MonoBehaviour
 {
-    protected delegate int[,] POINTING();
+    public Vector3[] Rand_Pos = new Vector3[20];
 
+    public int Count_num = 0;
     static protected int Catridge_Big    = 2;
     static protected int Catridge_Medium = 2;
     static protected int Catridge_Small  = 1;
@@ -56,9 +57,6 @@ public class Respawn_Enemy : MonoBehaviour
     {
         while (Trigger[3] == true)
         {
-            //1초마다 랜덤으로 생성하도록 설정
-            //추후 매페이즈 마다 생성하도록 트리거를 넣을 예정
-
             if (Trigger[0] == true)
             {
                 for (int i = 0; i < Count_Big; i++)
@@ -67,7 +65,9 @@ public class Respawn_Enemy : MonoBehaviour
                     int rand_a = Random.Range(1, 5);
                     rand_a *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
-                    GameObject Instant_Big = Instantiate(Object_Big[a], Return_RandomPosition(), quaternion);
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    GameObject Instant_Big = Instantiate(Object_Big[a], Rand_Pos[Count_num], quaternion);
+                    Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
                 Trigger[0] = false;
@@ -80,7 +80,9 @@ public class Respawn_Enemy : MonoBehaviour
                     int rand_b = Random.Range(1, 5);
                     rand_b *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
-                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Return_RandomPosition(), quaternion);
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
+                    Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
                 Trigger[1] = false;
@@ -93,8 +95,11 @@ public class Respawn_Enemy : MonoBehaviour
                     int rand_c = Random.Range(1, 5);
                     rand_c *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
-                    GameObject Instant_Small = Instantiate(Object_Small[c], Return_RandomPosition(), quaternion);
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    GameObject Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
+                    Count_num++;
                     yield return new WaitForSeconds(1f);
+                    
                 }
                 Trigger[2] = false;
             }
@@ -106,7 +111,9 @@ public class Respawn_Enemy : MonoBehaviour
                     int rand_d = Random.Range(1, 5);
                     rand_d *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
-                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), quaternion);
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Rand_Pos[Count_num], quaternion);
+                    Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
                 Trigger[3] = false;

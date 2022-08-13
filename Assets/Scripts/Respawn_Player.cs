@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Respawn_Player : MonoBehaviour
 {
+    Vector3[,] Rand_Pos = new Vector3[20, 2];
+
     static public int Catridge_Big = 2;
     static public int Catridge_Medium = 2;
     static public int Catridge_Small = 1;
