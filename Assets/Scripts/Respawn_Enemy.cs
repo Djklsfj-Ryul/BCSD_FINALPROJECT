@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class Array
 {
-    public Array(GameObject _Collect, int _y, int _x)
-    {
-        Collect = _Collect;
-        x = _x;
-        y = _y;
-    }
     public int x, y;
     public GameObject Collect;
 }
@@ -17,32 +11,30 @@ public class Array
 public class Respawn_Enemy : MonoBehaviour
 {
     public Vector3[] Rand_Pos = new Vector3[20];
-    
+    public Array[] Manage = new Array[Count_Big + Count_Medium + Count_Small + Count_Enemy];
 
     public int Count_num = 0;
     static public int Catridge_Big    = 2;
     static public int Catridge_Medium = 2;
     static public int Catridge_Small  = 1;
     static public int Catridge_Enemy  = 1;
-    [SerializeField]
-    static public int Count_Big    = 1;
-    [SerializeField]
-    static public int Count_Medium = 2;
-    [SerializeField]
-    static public int Count_Small  = 3;
-    [SerializeField]
-    static public int Count_Enemy = 1;
+    [SerializeField]    static public int Count_Big    = 1;
+    [SerializeField]    static public int Count_Medium = 2;
+    [SerializeField]    static public int Count_Small  = 3;
+    [SerializeField]    static public int Count_Enemy = 1;
 
-    [SerializeField]
-    private GameObject[] Object_Big    = new GameObject[Catridge_Big];
-    [SerializeField]
-    private GameObject[] Object_Medium = new GameObject[Catridge_Medium];
-    [SerializeField]
-    private GameObject[] Object_Small  = new GameObject[Catridge_Small];
-    [SerializeField]
-    private GameObject[] Object_Enemy  = new GameObject[Catridge_Enemy];
-    [SerializeField]
-    private GameObject Object_Ground;
+    [SerializeField] private GameObject[] Object_Big    = new GameObject[Catridge_Big];
+    [SerializeField] private GameObject[] Object_Medium = new GameObject[Catridge_Medium];
+    [SerializeField] private GameObject[] Object_Small  = new GameObject[Catridge_Small];
+    [SerializeField] private GameObject[] Object_Enemy  = new GameObject[Catridge_Enemy];
+    [SerializeField] private GameObject Object_Ground;
+
+    [SerializeField] public GameObject Instant_Big;
+    [SerializeField] public GameObject Instant_Medium;
+    [SerializeField] public GameObject Instant_Small;
+    [SerializeField] public GameObject Instant_Enemy;
+
+
     BoxCollider Range_Collider;
 
     static int MAP_X = 20;
@@ -67,7 +59,7 @@ public class Respawn_Enemy : MonoBehaviour
 
     }
     IEnumerator Random_Respawn()
-    {
+    { 
         while (Trigger[3] == true)
         {
             if (Trigger[0] == true)
@@ -79,7 +71,13 @@ public class Respawn_Enemy : MonoBehaviour
                     rand_a *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
-                    GameObject Instant_Big = Instantiate(Object_Big[a], Rand_Pos[Count_num], quaternion);
+                    Debug.Log("hih");
+                    Instant_Big = Instantiate(Object_Big[a], Rand_Pos[Count_num], quaternion);
+                    /*
+                    Manage[Count_num].Collect = Object_Big[a];
+                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
+                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z;
+                    */
                     Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
@@ -94,7 +92,10 @@ public class Respawn_Enemy : MonoBehaviour
                     rand_b *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
-                    GameObject Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
+                    Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
+                    /*Manage[Count_num].Collect = Object_Big[b];
+                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
+                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z; */
                     Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
@@ -109,7 +110,10 @@ public class Respawn_Enemy : MonoBehaviour
                     rand_c *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
-                    GameObject Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
+                    Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
+                    /*Manage[Count_num].Collect = Object_Big[c];
+                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
+                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z; */
                     Count_num++;
                     yield return new WaitForSeconds(1f);
                     
@@ -125,7 +129,7 @@ public class Respawn_Enemy : MonoBehaviour
                     rand_d *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
-                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Rand_Pos[Count_num], quaternion);
+                    Instant_Enemy = Instantiate(Object_Enemy[d], Rand_Pos[Count_num], quaternion);
                     Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
@@ -281,19 +285,19 @@ public class Respawn_Enemy : MonoBehaviour
      * 10000000011100000001
      * 11111111111111111111
      */
-    //로그로 맵 확인
-    /*
-    string a1 = "";
-    for (int i = 0; i < 20; i++)
-    {
-        for (int j = 0; j < 20; j++)
-        {
-            a1 = a1 + MAP[j,i];
-        }
-        Debug.Log(a1);
-        a1 = "";
-    }
-    */
+                    //로그로 맵 확인
+                    /*
+                    string a1 = "";
+                    for (int i = 0; i < 20; i++)
+                    {
+                        for (int j = 0; j < 20; j++)
+                        {
+                            a1 = a1 + MAP[j,i];
+                        }
+                        Debug.Log(a1);
+                        a1 = "";
+                    }
+                    */
     void Making_Map()
     {
         for (int i = 0; i < MAP_Z; i++)

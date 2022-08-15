@@ -52,9 +52,9 @@ public class Enemy : MonoBehaviour
         NodeArray  = new Node[sizeY, sizeX];
 
         // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
-        Pos_x = (int)res.Rand_Pos[res.Count_num - 1].x;
-        Pos_z = (int)res.Rand_Pos[res.Count_num - 1].z;
-        Rand_Pos = Random.Range(0, res.Count_num - 2);
+        Pos_x = (int)res.Rand_Pos[res.Count_num].x;
+        Pos_z = (int)res.Rand_Pos[res.Count_num].z;
+        Rand_Pos = Random.Range(0, res.Count_num - 1);
         Rand_Pos_x = (int)res.Rand_Pos[Rand_Pos].x;
         Rand_Pos_z = (int)res.Rand_Pos[Rand_Pos].z;
 
@@ -108,8 +108,22 @@ public class Enemy : MonoBehaviour
                 FinalNodeList.Add(StartNode);
                 FinalNodeList.Reverse();
 
+                string a1 = "";
+                for (int i = 0; i < 20; i++)
+                {
+                    for (int j = 0; j < 20; j++)
+                    {
+                        a1 = a1 + res.MAP[j, i];
+                    }
+                    Debug.Log(a1);
+                    a1 = "";
+                }
+
                 for (int i = 0; i < FinalNodeList.Count; i++)
+                {
+                    res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[i].x, 21, FinalNodeList[i].y);
                     Debug.Log(i + "번째는 " + FinalNodeList[i].y + ", " + FinalNodeList[i].x);
+                }
                 return;
             }
 
@@ -129,6 +143,7 @@ public class Enemy : MonoBehaviour
             if(res.MAP[checkY,checkX] == 5)
             {
                 TargetNode = NodeArray[checkY, checkX];
+                Debug.Log("Enemy 이동거리 변경 : " + checkY + "," + checkX);
                 Trigger = false;
             }
             // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
@@ -158,7 +173,18 @@ public class Enemy : MonoBehaviour
     {
         for (int i = 0; i < res.Count_num - 1; i++)
         {
-            if (i < Respawn_Enemy.Count_Big)
+            if (Rand_Pos < Respawn_Enemy.Count_Big)
+            {
+                for (int dy = -3; dy < 4; dy++)
+                {
+                    for (int dx = -3; dx < 4; dx++)
+                    {
+                        res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                    }
+                }
+                break;
+            }
+            else if (Rand_Pos < Respawn_Enemy.Count_Big + Respawn_Enemy.Count_Medium)
             {
                 for (int dy = -2; dy < 3; dy++)
                 {
@@ -169,7 +195,7 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             }
-            else if (i < Respawn_Enemy.Count_Big + Respawn_Enemy.Count_Medium)
+            else if (Rand_Pos < Respawn_Enemy.Count_Big + Respawn_Enemy.Count_Medium + Respawn_Enemy.Count_Small)
             {
                 for (int dy = -1; dy < 2; dy++)
                 {
@@ -178,11 +204,6 @@ public class Enemy : MonoBehaviour
                         res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
-                break;
-            }
-            else if (i < Respawn_Enemy.Count_Big + Respawn_Enemy.Count_Medium + Respawn_Enemy.Count_Small)
-            {
-                res.MAP[Rand_Pos_z, Rand_Pos_x] = 5;
                 break;
             }
         }
