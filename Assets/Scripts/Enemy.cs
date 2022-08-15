@@ -40,6 +40,7 @@ public class Enemy : MonoBehaviour
     {
         res = FindObjectOfType<Respawn_Enemy>();
         PathFinding();
+        ShowMap();
     }
 
     public void PathFinding()
@@ -73,8 +74,8 @@ public class Enemy : MonoBehaviour
                 NodeArray[j, i] = new Node(isWall, j + (int)bottomLeft.y, i + (int)bottomLeft.x);
             }
         }
-        Debug.Log(Pos_z + "," + Pos_x);
-        Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+        //Debug.Log(Pos_z + "," + Pos_x);
+        //Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
         StartNode = NodeArray[Pos_z, Pos_x];
         if(Trigger)
             TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
@@ -107,18 +108,6 @@ public class Enemy : MonoBehaviour
                 }
                 FinalNodeList.Add(StartNode);
                 FinalNodeList.Reverse();
-
-                string a1 = "";
-                for (int i = 0; i < 20; i++)
-                {
-                    for (int j = 0; j < 20; j++)
-                    {
-                        a1 = a1 + res.MAP[j, i];
-                    }
-                    Debug.Log(a1);
-                    a1 = "";
-                }
-
                 for (int i = 0; i < FinalNodeList.Count; i++)
                 {
                     res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[i].x, 21, FinalNodeList[i].y);
@@ -147,7 +136,7 @@ public class Enemy : MonoBehaviour
                 Trigger = false;
             }
             // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
-            Debug.Log(checkY + "," + checkX);
+            //Debug.Log(checkY + "," + checkX);
             Node NeighborNode = NodeArray[checkY, checkX];
             int MoveCost = CurNode.G + 10;
 
@@ -206,6 +195,19 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             }
+        }
+    }
+    void ShowMap()
+    {
+        string a1 = "";
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                a1 = a1 + res.MAP[j, i];
+            }
+            Debug.Log(a1);
+            a1 = "";
         }
     }
 }

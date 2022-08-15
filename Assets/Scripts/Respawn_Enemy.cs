@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Array
 {
+    public Array(GameObject _Collect, int _y, int _x)
+    {
+        Collect = _Collect;
+        x = _x;
+        y = _y;
+    }
     public int x, y;
     public GameObject Collect;
 }
@@ -18,10 +24,11 @@ public class Respawn_Enemy : MonoBehaviour
     static public int Catridge_Medium = 2;
     static public int Catridge_Small  = 1;
     static public int Catridge_Enemy  = 1;
-    [SerializeField]    static public int Count_Big    = 1;
-    [SerializeField]    static public int Count_Medium = 2;
-    [SerializeField]    static public int Count_Small  = 3;
-    [SerializeField]    static public int Count_Enemy = 1;
+
+    [SerializeField] static public int Count_Big    = 1;
+    [SerializeField] static public int Count_Medium = 2;
+    [SerializeField] static public int Count_Small  = 3;
+    [SerializeField] static public int Count_Enemy  = 1;
 
     [SerializeField] private GameObject[] Object_Big    = new GameObject[Catridge_Big];
     [SerializeField] private GameObject[] Object_Medium = new GameObject[Catridge_Medium];
@@ -51,12 +58,10 @@ public class Respawn_Enemy : MonoBehaviour
     {
         Range_Collider = Object_Ground.GetComponent<BoxCollider>();
     }
-
     public void Start()
     {
         Making_Map();
         StartCoroutine(Random_Respawn());
-
     }
     IEnumerator Random_Respawn()
     { 
@@ -71,7 +76,6 @@ public class Respawn_Enemy : MonoBehaviour
                     rand_a *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
-                    Debug.Log("hih");
                     Instant_Big = Instantiate(Object_Big[a], Rand_Pos[Count_num], quaternion);
                     /*
                     Manage[Count_num].Collect = Object_Big[a];
@@ -285,19 +289,18 @@ public class Respawn_Enemy : MonoBehaviour
      * 10000000011100000001
      * 11111111111111111111
      */
-                    //로그로 맵 확인
-                    /*
-                    string a1 = "";
-                    for (int i = 0; i < 20; i++)
-                    {
-                        for (int j = 0; j < 20; j++)
-                        {
-                            a1 = a1 + MAP[j,i];
-                        }
-                        Debug.Log(a1);
-                        a1 = "";
-                    }
-                    */
+    /*로그로 맵 확인
+    string a1 = "";
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 20; j++)
+        {
+            a1 = a1 + MAP[j,i];
+        }
+        Debug.Log(a1);
+        a1 = "";
+    }
+    */
     void Making_Map()
     {
         for (int i = 0; i < MAP_Z; i++)
