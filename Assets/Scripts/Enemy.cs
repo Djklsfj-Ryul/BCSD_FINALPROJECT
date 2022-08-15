@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
     public Vector3 bottomLeft, topRight;
     public List<Node> FinalNodeList;
 
+    bool Trigger = true;
     int Rand_Pos;
     int sizeX, sizeY;
     int Pos_x, Pos_z;
@@ -75,7 +76,8 @@ public class Enemy : MonoBehaviour
         Debug.Log(Pos_z + "," + Pos_x);
         Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
         StartNode = NodeArray[Pos_z, Pos_x];
-        TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
+        if(Trigger)
+            TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
 
         OpenList = new List<Node>() { StartNode };
         ClosedList = new List<Node>();
@@ -124,6 +126,11 @@ public class Enemy : MonoBehaviour
         // 상하좌우 범위를 벗어나지 않고, 벽이 아니면서, 닫힌리스트에 없다면
         if (checkX >= bottomLeft.x && checkX < topRight.x + 1 && checkY < bottomLeft.z + 1 && checkY >= topRight.z && !NodeArray[checkY, checkX].isWall && !ClosedList.Contains(NodeArray[checkY, checkX]))
         {
+            if(res.MAP[checkY,checkX] == 5)
+            {
+                TargetNode = NodeArray[checkY, checkX];
+                Trigger = false;
+            }
             // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
             Debug.Log(checkY + "," + checkX);
             Node NeighborNode = NodeArray[checkY, checkX];
