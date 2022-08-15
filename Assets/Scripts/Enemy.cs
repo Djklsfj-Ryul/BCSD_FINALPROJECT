@@ -43,28 +43,12 @@ public class Enemy : MonoBehaviour
 
     public void PathFinding()
     {
-        
         // NodeArray의 크기 정해주고, isWall, x, y 대입
         sizeX = res.MAP.GetLength(1);
         sizeY = res.MAP.GetLength(0);
         bottomLeft = new Vector3(0, 0, sizeY);
         topRight   = new Vector3(sizeX, 0, 0);
         NodeArray  = new Node[sizeY, sizeX];
-
-        for (int j = 0; j < sizeY; j++)
-        {
-            for (int i = 0; i < sizeX; i++)
-            {
-                bool isWall = false;
-                if (res.MAP[j, i] != 0 && res.MAP[j,i] != 7 && res.MAP[j, i] != 8 && res.MAP[j, i] != 9)
-                {
-                    //Debug.Log("좌표" + j+","+i+"는 벽입니다.");
-                    isWall = true;
-                }
-                NodeArray[j, i] = new Node(isWall, j + (int)bottomLeft.y, i + (int)bottomLeft.x);
-                //Debug.Log(NodeArray[j, i].isWall + "," + NodeArray[j, i].y + "," + NodeArray[j, i].x);
-            }
-        }
 
         // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
         Pos_x = (int)res.Rand_Pos[res.Count_num - 1].x;
@@ -73,6 +57,21 @@ public class Enemy : MonoBehaviour
         Rand_Pos_x = (int)res.Rand_Pos[Rand_Pos].x;
         Rand_Pos_z = (int)res.Rand_Pos[Rand_Pos].z;
 
+        for (int j = 0; j < sizeY; j++)
+        {
+            for (int i = 0; i < sizeX; i++)
+            {
+                bool isWall = false;
+
+                Distinguish(Rand_Pos_z, Rand_Pos_x, Rand_Pos);
+
+                if (res.MAP[j,i] == 7 || res.MAP[j, i] == 8)
+                {
+                    isWall = true;
+                }
+                NodeArray[j, i] = new Node(isWall, j + (int)bottomLeft.y, i + (int)bottomLeft.x);
+            }
+        }
         Debug.Log(Pos_z + "," + Pos_x);
         Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
         StartNode = NodeArray[Pos_z, Pos_x];
@@ -125,7 +124,7 @@ public class Enemy : MonoBehaviour
         // 상하좌우 범위를 벗어나지 않고, 벽이 아니면서, 닫힌리스트에 없다면
         if (checkX >= bottomLeft.x && checkX < topRight.x + 1 && checkY < bottomLeft.z + 1 && checkY >= topRight.z && !NodeArray[checkY, checkX].isWall && !ClosedList.Contains(NodeArray[checkY, checkX]))
         {
-            // 이웃노드에 넣고, 직선은 10, 대각선은 14비용
+            // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
             Debug.Log(checkY + "," + checkX);
             Node NeighborNode = NodeArray[checkY, checkX];
             int MoveCost = CurNode.G + 10;
@@ -140,7 +139,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-
     void OnDrawGizmos()
     {
         if (FinalNodeList.Count != 0)
@@ -148,5 +146,38 @@ public class Enemy : MonoBehaviour
             {
                 Gizmos.DrawLine(new Vector3(FinalNodeList[i].x, 25, FinalNodeList[i].y), new Vector3(FinalNodeList[i + 1].x, 25, FinalNodeList[i + 1].y));
             }
+    }
+    void Distinguish(int Rand_Pos_z, int Rand_Pos_x, int Random)
+    {
+        for (int i = 0; i < res.Count_num - 1; i++)
+        {
+            if (i < Respawn_Enemy.Count_Big)
+            {
+                for (int dy = -2; dy < 3; dy++)
+                {
+                    for (int dx = -2; dx < 3; dx++)
+                    {
+                        res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                    }
+                }
+                break;
+            }
+            else if (i < Respawn_Enemy.Count_Big + Respawn_Enemy.Count_Medium)
+            {
+                for (int dy = -1; dy < 2; dy++)
+                {
+                    for (int dx = -1; dx < 2; dx++)
+                    {
+                        res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                    }
+                }
+                break;
+            }
+            else if (i < Respawn_Enemy.Count_Big + Respawn_Enemy.Count_Medium + Respawn_Enemy.Count_Small)
+            {
+                res.MAP[Rand_Pos_z, Rand_Pos_x] = 5;
+                break;
+            }
+        }
     }
 }

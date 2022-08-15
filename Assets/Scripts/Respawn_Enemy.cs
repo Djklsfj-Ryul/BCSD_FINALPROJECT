@@ -2,23 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Array
+{
+    public Array(GameObject _Collect, int _y, int _x)
+    {
+        Collect = _Collect;
+        x = _x;
+        y = _y;
+    }
+    public int x, y;
+    public GameObject Collect;
+}
+
 public class Respawn_Enemy : MonoBehaviour
 {
     public Vector3[] Rand_Pos = new Vector3[20];
+    
 
     public int Count_num = 0;
-    static protected int Catridge_Big    = 2;
-    static protected int Catridge_Medium = 2;
-    static protected int Catridge_Small  = 1;
-    static protected int Catridge_Enemy  = 1;
+    static public int Catridge_Big    = 2;
+    static public int Catridge_Medium = 2;
+    static public int Catridge_Small  = 1;
+    static public int Catridge_Enemy  = 1;
     [SerializeField]
-    static protected int Count_Big    = 1;
+    static public int Count_Big    = 1;
     [SerializeField]
-    static protected int Count_Medium = 2;
+    static public int Count_Medium = 2;
     [SerializeField]
-    static protected int Count_Small  = 3;
+    static public int Count_Small  = 3;
     [SerializeField]
-    static protected int Count_Enemy = 1;
+    static public int Count_Enemy = 1;
 
     [SerializeField]
     private GameObject[] Object_Big    = new GameObject[Catridge_Big];
@@ -291,9 +304,5 @@ public class Respawn_Enemy : MonoBehaviour
                 else MAP[i, j] = 0;
             }
         }
-    }
-    protected int[,] Overriding_Map()
-    {
-        return MAP;
     }
 }
