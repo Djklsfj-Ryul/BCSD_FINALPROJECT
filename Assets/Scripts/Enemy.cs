@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     public List<Node> FinalNodeList;
     public int HOW = 0;
 
+    bool Pick_Up = false;
     bool Trigger = true;
     int Rand_Pos;
     int sizeX, sizeY;
@@ -50,12 +51,78 @@ public class Enemy : MonoBehaviour
         if (Full_System.Stamina_Enemy != 0)
         {
             PathFinding((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
+            RESET((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
             while(true)
             {
                 if(!CHECKING())
                 {
+                    Pick_Up = true;
                     PathFinding(x, y);
                     break;
+                }
+            }
+        }
+        ShowMap();
+    }
+    public void RESET(int x, int y)
+    {
+        if (HOW == 3)
+        {
+            for (int dy = -3; dy < 4; dy++)
+            {
+                for (int dx = -3; dx < 4; dx++)
+                {
+                    if (dx == 3 || dx == -3 || dy == 3 || dy == -3)
+                    {
+                        if (res.MAP[y + dy, x + dx] == 5)
+                        {
+                            res.MAP[y + dy, x + dx] = 0;
+                        }
+                    }
+                    else
+                    {
+                        res.MAP[y + dy, x + dx] = 0;
+                    }
+                }
+            }
+        }
+        if (HOW == 2)
+        {
+            for (int dy = -2; dy < 3; dy++)
+            {
+                for (int dx = -2; dx < 3; dx++)
+                {
+                    if (dx == 2 || dx == -2 || dy == 2 || dy == -2)
+                    {
+                        if (res.MAP[y + dy, x + dx] == 5)
+                        {
+                            res.MAP[y + dy, x + dx] = 0;
+                        }
+                    }
+                    else
+                    {
+                        res.MAP[y + dy, x + dx] = 0;
+                    }
+                }
+            }
+        }
+        if (HOW == 1)
+        {
+            for (int dy = -1; dy < 2; dy++)
+            {
+                for (int dx = -1; dx < 2; dx++)
+                {
+                    if (dx == 1 || dx == -1 || dy == 1 || dy == -1)
+                    {
+                        if (res.MAP[y + dy, x + dx] == 5)
+                        {
+                            res.MAP[y + dy, x + dx] = 0;
+                        }
+                    }
+                    else
+                    {
+                        res.MAP[y + dy, x + dx] = 0;
+                    }
                 }
             }
         }
@@ -113,6 +180,8 @@ public class Enemy : MonoBehaviour
         Pos_x = (int)res.Rand_Pos[res.Count_num - 1].x;
         Pos_z = (int)res.Rand_Pos[res.Count_num - 1].z;
 
+        res.MAP[Pos_z, Pos_x] = 0;
+
         if (HOW == 0)
             HOW = Distinguish(Rand_Pos_z, Rand_Pos_x, Rand_Pos);
         for (int j = 0; j < sizeY; j++)
@@ -128,8 +197,8 @@ public class Enemy : MonoBehaviour
                 NodeArray[j, i] = new Node(isWall, j + (int)bottomLeft.y, i + (int)bottomLeft.x);
             }
         }
-        Debug.Log(Pos_z + "," + Pos_x);
-        Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+        //Debug.Log(Pos_z + "," + Pos_x);
+        //Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
         StartNode = NodeArray[Pos_z, Pos_x];
         TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
 
@@ -165,9 +234,21 @@ public class Enemy : MonoBehaviour
                 {
                     res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[i].x, 21, FinalNodeList[i].y);
                     Debug.Log(i + "번째는 " + FinalNodeList[i].y + ", " + FinalNodeList[i].x);
+                    Full_System.Stamina_Enemy--;
+                    if (Pick_Up && Full_System.Stamina_Enemy >= 1)
+                        Full_System.Stamina_Enemy -= 2;
+                    if (Full_System.Stamina_Enemy == 0)
+                    {
+                        Debug.Log("스태미나");
+                        res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
+                        res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
+                        res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
+                        return;
+                    }
                 }
                 res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
                 res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
+                res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
                 return;
             }
 
@@ -206,14 +287,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    void OnDrawGizmos()
-    {
-        if (FinalNodeList.Count != 0)
-            for (int i = 0; i < FinalNodeList.Count - 1; i++)
-            {
-                Gizmos.DrawLine(new Vector3(FinalNodeList[i].x, 25, FinalNodeList[i].y), new Vector3(FinalNodeList[i + 1].x, 25, FinalNodeList[i + 1].y));
-            }
-    }
     int Distinguish(int Rand_Pos_z, int Rand_Pos_x, int Random)
     {
         for (int i = 0; i < res.Count_num - 1; i++)
@@ -224,10 +297,9 @@ public class Enemy : MonoBehaviour
                 {
                     for (int dx = -3; dx < 4; dx++)
                     {
-                        if((dx == -3 && dy == -3) || (dx == -3 && dy == 3) || (dx == 3 && dy == -3) || (dx == 3 && dy == 3))
-                            res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 0;
-                        else
-                            res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                        if (dx == 3 || dx == -3 || dy == 3 || dy == -3)
+                            if (res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -3 && dy == -3) || (dx == 3 && dy == -3) || (dx == -3 && dy == 3) || (dx == 3 && dy == 3)))
+                                res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
                 return 3;
@@ -238,10 +310,9 @@ public class Enemy : MonoBehaviour
                 {
                     for (int dx = -2; dx < 3; dx++)
                     {
-                        if ((dx == -2 && dy == -2) || (dx == -2 && dy == 2) || (dx == 2 && dy == -2) || (dx == 2 && dy == 2))
-                            res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 0;
-                        else
-                            res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                        if (dx == 2 || dx == -2 || dy == 2 || dy == -2)
+                            if (res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -2 && dy == -2) || (dx == 2 && dy == -2) || (dx == -2 && dy == 2) || (dx == 2 && dy == 2)))
+                                res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
                 return 2; 
@@ -252,10 +323,9 @@ public class Enemy : MonoBehaviour
                 {
                     for (int dx = -1; dx < 2; dx++)
                     {
-                        if ((dx == -1 && dy == -1) || (dx == -1 && dy == 1) || (dx == 1 && dy == -1) || (dx == 1 && dy == 1))
-                            res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 0;
-                        else
-                            res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                        if (dx == 1 || dx == -1 || dy == 1 || dy == -1)
+                            if (res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -1 && dy == -1) || (dx == 1 && dy == -1) || (dx == -1 && dy == 1) || (dx == 1 && dy == 1)))
+                                res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
                 return 1;
