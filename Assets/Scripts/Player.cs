@@ -28,9 +28,10 @@ public class Player : MonoBehaviour
     }
     void Player_Move()
     {
-        posx = (int)gameObject.transform.position.x;
-        posy = (int)gameObject.transform.position.y;
-        posz = (int)gameObject.transform.position.z;
+        
+        posx = (int)Mathf.Ceil(gameObject.transform.position.x);
+        posy = (int)Mathf.Ceil(gameObject.transform.position.y);
+        posz = (int)Mathf.Ceil(gameObject.transform.position.z);
         int angle = (int)gameObject.transform.rotation.eulerAngles.y;
 
         if (Input.GetKeyDown(KeyCode.W)) 
@@ -44,9 +45,15 @@ public class Player : MonoBehaviour
                         if (Pick)
                         {
                             PickUpObject.transform.position = new Vector3(posx + 1, posy + 2.5f, posz);
+                            gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                            posx++;
                         }
-                        gameObject.transform.position = new Vector3(posx + 1, posy, posz);
-                        posx++;
+                        else
+                        {
+                            gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                            Full_System.Stamina(Full_System.Stamina_Player);
+                            posx++;
+                        }
                     }
                     break;
                 case 90:
@@ -55,9 +62,15 @@ public class Player : MonoBehaviour
                         if (Pick)
                         {
                             PickUpObject.transform.position = new Vector3(posx, posy + 2.5f, posz - 1);
+                            gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                            posz--;
                         }
-                        gameObject.transform.position = new Vector3(posx, posy, posz - 1);
-                        posz--;
+                        else
+                        {
+                            gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                            Full_System.Stamina(Full_System.Stamina_Player);
+                            posz--;
+                        }
                     }
                     break;
                 case 180:
@@ -66,9 +79,15 @@ public class Player : MonoBehaviour
                         if (Pick)
                         {
                             PickUpObject.transform.position = new Vector3(posx - 1, posy + 2.5f, posz);
+                            gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                            posx--;
                         }
-                        gameObject.transform.position = new Vector3(posx - 1, posy, posz);
-                        posx--;
+                        else
+                        {
+                            gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                            Full_System.Stamina(Full_System.Stamina_Player);
+                            posx--;
+                        }
                     } 
                     break;
                 case 270:
@@ -77,13 +96,29 @@ public class Player : MonoBehaviour
                         if (Pick)
                         {
                             PickUpObject.transform.position = new Vector3(posx, posy + 2.5f, posz + 1);
+                            gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                            posz++;
                         }
-                        gameObject.transform.position = new Vector3(posx, posy, posz + 1);
-                        posz++;
+                        else
+                        {
+                            gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                            Full_System.Stamina(Full_System.Stamina_Player);
+                            posz++;
+                        }
                     }
                     break;
             }
             therespawn.MAP[posz, posx] = 9;
+            string a1 = "";
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    a1 = a1 + therespawn.MAP[j, i];
+                }
+                Debug.Log(a1);
+                a1 = "";
+            }
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -101,12 +136,16 @@ public class Player : MonoBehaviour
                 PickUpObject.transform.Rotate(0, +90, 0);
             }
         }
+        if (Input.GetKeyUp(KeyCode.Y))
+        {
+            Debug.Log("턴을 종료하겠습니까?");
+            if(Input.GetKeyDown(KeyCode.Y))
+                Full_System.Stamina_Player = 0;
+        }
     }
     bool Object_Check(int posx, int posz, int var_x, int var_y)
     {
-        Debug.Log(posz + "," + posx);
-        Debug.Log(var_y + "," + var_x);
-
+        Debug.Log(posy +","+ posx);
         if (therespawn.MAP[posz + var_y, posx + var_x] == 0)
             return true;
         else
@@ -115,7 +154,6 @@ public class Player : MonoBehaviour
     }
     void Pick_Up()
     {
-        Debug.DrawRay(gameObject.transform.position, gameObject.transform.right * 10, Color.red);
         if(Physics.Raycast(gameObject.transform.position, gameObject.transform.right, out hit, 1.0f))
         {
             Pick = true;

@@ -140,7 +140,6 @@ public class Respawn_Enemy : MonoBehaviour
                 Trigger[3] = false;
             }
         }
-        
     }
     public Vector3 Return_RandomPosition()
     {
