@@ -43,7 +43,7 @@ public class Enemy : MonoBehaviour
     {
         res = FindObjectOfType<Respawn_Enemy>();
         Enemy_Move();
-        //ShowMap();
+        Enemy_Move();
     }
     public void Enemy_Move()
     {
@@ -51,20 +51,178 @@ public class Enemy : MonoBehaviour
         if (Full_System.Stamina_Enemy != 0)
         {
             PathFinding((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
-            RESET((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
+            Moving( Pick_Up);
+            Reset((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
             while(true)
             {
-                if(!CHECKING())
+                if (!Checking())
                 {
                     Pick_Up = true;
                     PathFinding(x, y);
+                    if (Moving(Pick_Up))
+                    {
+                        Debug.Log("Reset");
+                        continue;
+                    }
+                    Pick_Up = false;
                     break;
                 }
+
             }
+            while (true)
+            {
+                if (Full_System.Stamina_Enemy > 0)
+                {
+                    x = Random.Range(1, (int)res.MAP.GetLength(1) - 1);
+                    y = Random.Range(1, (int)res.MAP.GetLength(0) - 1);
+                    if (res.MAP[y, x] == 0)
+                    {
+                        PathFinding(x, y);
+                        break;
+                    }
+                }
+                else break;
+            }
+            HOW = 0;
         }
         ShowMap();
     }
-    public void RESET(int x, int y)
+    public void PathFinding(int Rand_Pos_x, int Rand_Pos_z)
+    {
+        // NodeArray의 크기 정해주고, isWall, x, y 대입
+        sizeX = res.MAP.GetLength(1);
+        sizeY = res.MAP.GetLength(0);
+        bottomLeft = new Vector3(0, 0, sizeY);
+        topRight = new Vector3(sizeX, 0, 0);
+        NodeArray = new Node[sizeY, sizeX];
+
+        // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
+        Pos_x = (int)res.Rand_Pos[res.Count_num - 1].x;
+        Pos_z = (int)res.Rand_Pos[res.Count_num - 1].z;
+
+        res.MAP[Pos_z, Pos_x] = 0;
+
+        if (HOW == 0)
+            HOW = Distinguish(Rand_Pos_z, Rand_Pos_x, Rand_Pos);
+        for (int j = 0; j < sizeY; j++)
+        {
+            for (int i = 0; i < sizeX; i++)
+            {
+                bool isWall = false;
+
+                if (res.MAP[j, i] == 7 || res.MAP[j, i] == 8)
+                {
+                    isWall = true;
+                }
+                NodeArray[j, i] = new Node(isWall, j + (int)bottomLeft.y, i + (int)bottomLeft.x);
+            }
+        }
+        //Debug.Log(Pos_z + "," + Pos_x);
+        //Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+        StartNode = NodeArray[Pos_z, Pos_x];
+        TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
+
+        OpenList = new List<Node>() { StartNode };
+        ClosedList = new List<Node>();
+        FinalNodeList = new List<Node>();
+
+
+        while (OpenList.Count > 0)
+        {
+            // 열린리스트 중 가장 F가 작고 F가 같다면 H가 작은 걸 현재노드로 하고 열린리스트에서 닫힌리스트로 옮기기
+            CurNode = OpenList[0];
+            for (int i = 1; i < OpenList.Count; i++)
+                if (OpenList[i].F <= CurNode.F && OpenList[i].H < CurNode.H)
+                {
+                    CurNode = OpenList[i];
+                }
+            OpenList.Remove(CurNode);
+            ClosedList.Add(CurNode);
+
+            // 마지막
+            if (CurNode == TargetNode)
+            {
+                Node TargetCurNode = TargetNode;
+                while (TargetCurNode != StartNode)
+                {
+                    FinalNodeList.Add(TargetCurNode);
+                    TargetCurNode = TargetCurNode.ParentNode;
+                }
+                FinalNodeList.Add(StartNode);
+                FinalNodeList.Reverse();
+                return;
+            }
+
+            // ↑ → ↓ ←
+            OpenListAdd(CurNode.x, CurNode.y + 1);
+            OpenListAdd(CurNode.x + 1, CurNode.y);
+            OpenListAdd(CurNode.x, CurNode.y - 1);
+            OpenListAdd(CurNode.x - 1, CurNode.y);
+        }
+    }
+    public bool Moving(bool pick)
+    {
+        for (int i = 0; i < FinalNodeList.Count; i++)
+        {
+            if (!Pick_Up && Full_System.Stamina_Enemy >= 1)
+            {
+                Debug.Log(i + "번째는" + FinalNodeList[i].y + "," + FinalNodeList[i].x);
+                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[i].x, 21, FinalNodeList[i].y);
+                Full_System.Stamina_Enemy--;
+            }
+            else if (Pick_Up && Full_System.Stamina_Enemy >= 1)
+            {
+
+                if (Full_System.Stamina_Enemy < FinalNodeList.Count * HOW)
+                    return true;
+                else
+                {
+                    Debug.Log(i + "번째는" + FinalNodeList[i].y + "," + FinalNodeList[i].x);
+                    if (HOW == 3)
+                    {
+                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 4].x, 21, FinalNodeList[FinalNodeList.Count - 4].y);
+                        res.Instant_Big.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                        Pointing(FinalNodeList[FinalNodeList.Count - 4].x, FinalNodeList[FinalNodeList.Count - 4].y, 0);
+                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                        Full_System.Stamina_Enemy -= (HOW + 2);
+                    }
+                    else if (HOW == 2)
+                    {
+                        for (int j = 0; j < Respawn_Enemy.Count_Medium; j++)
+                        {
+                            if (Mathf.Ceil(res.manage[0, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[0, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
+                            {
+                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 3].x, 21, FinalNodeList[FinalNodeList.Count - 3].y);
+                                res.manage[0, j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                            }
+                        }
+                        Pointing(FinalNodeList[FinalNodeList.Count - 3].x, FinalNodeList[FinalNodeList.Count - 3].y, 0);
+                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                        Full_System.Stamina_Enemy -= (HOW + 1);
+                    }
+                    else if (HOW == 1)
+                    {
+                        for (int j = 0; j < Respawn_Enemy.Count_Small; j++)
+                        {
+                            if (Mathf.Ceil(res.manage[1, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[1, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
+                            {
+                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 2].x, 21, FinalNodeList[FinalNodeList.Count - 2].y);
+                                res.manage[1, j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                            }
+                        }
+                        Pointing(FinalNodeList[FinalNodeList.Count - 2].x, FinalNodeList[FinalNodeList.Count - 2].y, 0);
+                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                        Full_System.Stamina_Enemy -= (HOW + 1);
+                    }
+                }
+            }
+        }
+        res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
+        res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
+        res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
+        return false;
+    }
+    public void Reset(int x, int y)
     {
         if (HOW == 3)
         {
@@ -127,7 +285,7 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-    public bool CHECKING()
+    public bool Checking()
     {
         x = Random.Range(1, (int)res.MAP.GetLength(1) - 1);
         y = Random.Range(1, (int)res.MAP.GetLength(0) - 1);
@@ -167,124 +325,39 @@ public class Enemy : MonoBehaviour
         }
         return false;
     }
-    public void PathFinding(int Rand_Pos_x, int Rand_Pos_z)
-    {
-        // NodeArray의 크기 정해주고, isWall, x, y 대입
-        sizeX = res.MAP.GetLength(1);
-        sizeY = res.MAP.GetLength(0);
-        bottomLeft = new Vector3(0, 0, sizeY);
-        topRight   = new Vector3(sizeX, 0, 0);
-        NodeArray  = new Node[sizeY, sizeX];
-
-        // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
-        Pos_x = (int)res.Rand_Pos[res.Count_num - 1].x;
-        Pos_z = (int)res.Rand_Pos[res.Count_num - 1].z;
-
-        res.MAP[Pos_z, Pos_x] = 0;
-
-        if (HOW == 0)
-            HOW = Distinguish(Rand_Pos_z, Rand_Pos_x, Rand_Pos);
-        for (int j = 0; j < sizeY; j++)
-        {
-            for (int i = 0; i < sizeX; i++)
-            {
-                bool isWall = false;
-
-                if (res.MAP[j,i] == 7 || res.MAP[j, i] == 8)
-                {
-                    isWall = true;
-                }
-                NodeArray[j, i] = new Node(isWall, j + (int)bottomLeft.y, i + (int)bottomLeft.x);
-            }
-        }
-        //Debug.Log(Pos_z + "," + Pos_x);
-        //Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
-        StartNode = NodeArray[Pos_z, Pos_x];
-        TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
-
-        OpenList = new List<Node>() { StartNode };
-        ClosedList = new List<Node>();
-        FinalNodeList = new List<Node>();
-
-
-        while (OpenList.Count > 0)
-        {
-            // 열린리스트 중 가장 F가 작고 F가 같다면 H가 작은 걸 현재노드로 하고 열린리스트에서 닫힌리스트로 옮기기
-            CurNode = OpenList[0];
-            for (int i = 1; i < OpenList.Count; i++)
-                if (OpenList[i].F <= CurNode.F && OpenList[i].H < CurNode.H)
-                {
-                    CurNode = OpenList[i];
-                }
-            OpenList.Remove(CurNode);
-            ClosedList.Add(CurNode);
-
-            // 마지막
-            if (CurNode == TargetNode)
-            {
-                Node TargetCurNode = TargetNode;
-                while (TargetCurNode != StartNode)
-                {
-                    FinalNodeList.Add(TargetCurNode);
-                    TargetCurNode = TargetCurNode.ParentNode;
-                }
-                FinalNodeList.Add(StartNode);
-                FinalNodeList.Reverse();
-                for (int i = 0; i < FinalNodeList.Count; i++)
-                {
-                    res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[i].x, 21, FinalNodeList[i].y);
-                    Debug.Log(i + "번째는 " + FinalNodeList[i].y + ", " + FinalNodeList[i].x);
-                    Full_System.Stamina_Enemy--;
-                    if (Pick_Up && Full_System.Stamina_Enemy >= 1)
-                        Full_System.Stamina_Enemy -= 2;
-                    if (Full_System.Stamina_Enemy == 0)
-                    {
-                        Debug.Log("스태미나");
-                        res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
-                        res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
-                        res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
-                        return;
-                    }
-                }
-                res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
-                res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
-                res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
-                return;
-            }
-
-            // ↑ → ↓ ←
-            OpenListAdd(CurNode.x, CurNode.y + 1);
-            OpenListAdd(CurNode.x + 1, CurNode.y);
-            OpenListAdd(CurNode.x, CurNode.y - 1);
-            OpenListAdd(CurNode.x - 1, CurNode.y);
-        }
-    }
     //checkx,y : 현재 내 x,y좌표 +1 -1
     void OpenListAdd(int checkX, int checkY)
     {
-        //Debug.Log(checkY +","+ checkX);
-        // 상하좌우 범위를 벗어나지 않고, 벽이 아니면서, 닫힌리스트에 없다면
-        if (checkX >= bottomLeft.x && checkX < topRight.x + 1 && checkY < bottomLeft.z + 1 && checkY >= topRight.z && !NodeArray[checkY, checkX].isWall && !ClosedList.Contains(NodeArray[checkY, checkX]))
+        try
         {
-            if(res.MAP[checkY,checkX] == 5 && Trigger)
+            //Debug.Log(checkY +","+ checkX);
+            // 상하좌우 범위를 벗어나지 않고, 벽이 아니면서, 닫힌리스트에 없다면
+            if (checkX >= bottomLeft.x && checkX < topRight.x + 1 && checkY < bottomLeft.z + 1 && checkY >= topRight.z && !NodeArray[checkY, checkX].isWall && !ClosedList.Contains(NodeArray[checkY, checkX]))
             {
-                TargetNode = NodeArray[checkY, checkX];
-                Debug.Log("Enemy 이동거리 변경 : " + checkY + "," + checkX);
-                Trigger = false;
-            }
-            // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
-            //Debug.Log(checkY + "," + checkX);
-            Node NeighborNode = NodeArray[checkY, checkX];
-            int MoveCost = CurNode.G + 10;
+                if (res.MAP[checkY, checkX] == 5 && Trigger)
+                {
+                    TargetNode = NodeArray[checkY, checkX];
+                    Debug.Log("Enemy 이동거리 변경 : " + checkY + "," + checkX);
+                    Trigger = false;
+                }
+                // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
+                //Debug.Log(checkY + "," + checkX);
+                Node NeighborNode = NodeArray[checkY, checkX];
+                int MoveCost = CurNode.G + 10;
 
-            // 이동비용이 이웃노드G보다 작거나 또는 열린리스트에 이웃노드가 없다면 G, H, ParentNode를 설정 후 열린리스트에 추가
-            if (MoveCost < NeighborNode.G || !OpenList.Contains(NeighborNode))
-            {
-                NeighborNode.G = MoveCost;
-                NeighborNode.H = (Mathf.Abs(NeighborNode.x - TargetNode.x) + Mathf.Abs(NeighborNode.y - TargetNode.y)) * 10;
-                NeighborNode.ParentNode = CurNode;
-                OpenList.Add(NeighborNode);
+                // 이동비용이 이웃노드G보다 작거나 또는 열린리스트에 이웃노드가 없다면 G, H, ParentNode를 설정 후 열린리스트에 추가
+                if (MoveCost < NeighborNode.G || !OpenList.Contains(NeighborNode))
+                {
+                    NeighborNode.G = MoveCost;
+                    NeighborNode.H = (Mathf.Abs(NeighborNode.x - TargetNode.x) + Mathf.Abs(NeighborNode.y - TargetNode.y)) * 10;
+                    NeighborNode.ParentNode = CurNode;
+                    OpenList.Add(NeighborNode);
+                }
             }
+        }
+        catch
+        {
+            return;
         }
     }
     int Distinguish(int Rand_Pos_z, int Rand_Pos_x, int Random)
@@ -332,6 +405,43 @@ public class Enemy : MonoBehaviour
             }
         }
         return 0;
+    }
+    public void Pointing(int x,int y,int HOW)
+    {
+        if(HOW==3)
+        {
+            for (int dy = -2; dy < 3; dy++)
+            {
+                for (int dx = -2; dx < 3; dx++)
+                {
+                    if (dy == 0 && dx == 0)
+                        res.MAP[y + dy, x + dx] = 8;
+                    else
+                        res.MAP[y + dy, x + dx] = 7;
+                }
+            }
+        }
+        else if (HOW == 2)
+        {
+            for (int dy = -1; dy < 2; dy++)
+            {
+                for (int dx = -1; dx < 2; dx++)
+                {
+                    if (dy == 0 && dx == 0)
+                        res.MAP[y + dy, x + dx] = 8;
+                    else
+                        res.MAP[y + dy, x + dx] = 7;
+                }
+            }
+        }
+        else if(HOW == 1)
+        {
+            res.MAP[y, x] = 8;
+        }
+        else
+        {
+            res.MAP[y, x] = 9;
+        }
     }
     void ShowMap()
     {

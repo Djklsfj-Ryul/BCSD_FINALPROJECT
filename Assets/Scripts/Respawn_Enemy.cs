@@ -38,8 +38,10 @@ public class Respawn_Enemy : MonoBehaviour
 
     [SerializeField] public GameObject Instant_Big;
     [SerializeField] public GameObject Instant_Medium;
-    [SerializeField] public GameObject Instant_Small;
+    [SerializeField] public GameObject Instant_Small; 
     [SerializeField] public GameObject Instant_Enemy;
+
+    public GameObject[,] manage = new GameObject[2, Count_Small]; 
 
 
     BoxCollider Range_Collider;
@@ -97,9 +99,7 @@ public class Respawn_Enemy : MonoBehaviour
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
                     Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
-                    /*Manage[Count_num].Collect = Object_Big[b];
-                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
-                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z; */
+                    manage[0, i] = Instant_Medium;
                     Count_num++;
                     yield return new WaitForSeconds(1f);
                 }
@@ -115,9 +115,7 @@ public class Respawn_Enemy : MonoBehaviour
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
                     Rand_Pos[Count_num] = Return_RandomPosition();
                     Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
-                    /*Manage[Count_num].Collect = Object_Big[c];
-                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
-                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z; */
+                    manage[1, i] = Instant_Small;
                     Count_num++;
                     yield return new WaitForSeconds(1f);
                     
