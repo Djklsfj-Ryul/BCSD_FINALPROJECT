@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     private int posx = 0;
     private int posy = 0;
     private int posz = 0;
-    
+    private bool Long_Sight = false;
 
     bool Pick = false;
     RaycastHit hit;
@@ -20,7 +20,8 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-        Player_Move();
+        if(!therespawn.Shutdown)
+            Player_Move();
         if (Input.GetKeyDown(KeyCode.Space) && !Pick)
             Pick_Up();
         else if (Input.GetKeyDown(KeyCode.Space) && Pick)
@@ -28,7 +29,6 @@ public class Player : MonoBehaviour
     }
     void Player_Move()
     {
-        
         posx = (int)Mathf.Ceil(gameObject.transform.position.x);
         posy = (int)Mathf.Ceil(gameObject.transform.position.y);
         posz = (int)Mathf.Ceil(gameObject.transform.position.z);
@@ -44,14 +44,15 @@ public class Player : MonoBehaviour
                     {
                         if (Pick)
                         {
-                            PickUpObject.transform.position = new Vector3(posx + 1, posy + 2.5f, posz);
+                            PickUpObject.transform.position = new Vector3(posx + 1, posy + 3f, posz);
                             gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                            Full_System.Stamina_Player -= 2;
                             posx++;
                         }
                         else
                         {
                             gameObject.transform.position = new Vector3(posx + 1, posy, posz);
-                            Full_System.Stamina(Full_System.Stamina_Player);
+                            Full_System.Stamina_Player--;
                             posx++;
                         }
                     }
@@ -61,14 +62,15 @@ public class Player : MonoBehaviour
                     {
                         if (Pick)
                         {
-                            PickUpObject.transform.position = new Vector3(posx, posy + 2.5f, posz - 1);
+                            PickUpObject.transform.position = new Vector3(posx, posy + 3f, posz - 1);
                             gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                            Full_System.Stamina_Player -= 2;
                             posz--;
                         }
                         else
                         {
                             gameObject.transform.position = new Vector3(posx, posy, posz - 1);
-                            Full_System.Stamina(Full_System.Stamina_Player);
+                            Full_System.Stamina_Player--;
                             posz--;
                         }
                     }
@@ -78,14 +80,15 @@ public class Player : MonoBehaviour
                     {
                         if (Pick)
                         {
-                            PickUpObject.transform.position = new Vector3(posx - 1, posy + 2.5f, posz);
+                            PickUpObject.transform.position = new Vector3(posx - 1, posy + 3f, posz);
                             gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                            Full_System.Stamina_Player -= 2;
                             posx--;
                         }
                         else
                         {
                             gameObject.transform.position = new Vector3(posx - 1, posy, posz);
-                            Full_System.Stamina(Full_System.Stamina_Player);
+                            Full_System.Stamina_Player--;
                             posx--;
                         }
                     } 
@@ -95,30 +98,21 @@ public class Player : MonoBehaviour
                     {
                         if (Pick)
                         {
-                            PickUpObject.transform.position = new Vector3(posx, posy + 2.5f, posz + 1);
+                            PickUpObject.transform.position = new Vector3(posx, posy + 3f, posz + 1);
                             gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                            Full_System.Stamina_Player -= 2;
                             posz++;
                         }
                         else
                         {
                             gameObject.transform.position = new Vector3(posx, posy, posz + 1);
-                            Full_System.Stamina(Full_System.Stamina_Player);
+                            Full_System.Stamina_Player--;
                             posz++;
                         }
                     }
                     break;
             }
             therespawn.MAP[posz, posx] = 9;
-            string a1 = "";
-            for (int i = 0; i < 20; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    a1 = a1 + therespawn.MAP[j, i];
-                }
-                Debug.Log(a1);
-                a1 = "";
-            }
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -141,6 +135,19 @@ public class Player : MonoBehaviour
             Debug.Log("턴을 종료하겠습니까?");
             if(Input.GetKeyDown(KeyCode.Y))
                 Full_System.Stamina_Player = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (Long_Sight)
+            {
+                GameObject.Find("Main_Camera").transform.position = new Vector3(0, 0, 0);
+                GameObject.Find("Main_Camera").transform.Rotate(20, 0, 0);
+            }
+            else
+            {
+                GameObject.Find("Main_Camera").transform.position = new Vector3(0, 3.5f, -3.6f);
+                GameObject.Find("Main_Camera").transform.Rotate(-20, 0, 0);
+            }
         }
     }
     bool Object_Check(int posx, int posz, int var_x, int var_y)

@@ -49,10 +49,20 @@ public class Respawn_Player : MonoBehaviour
     public void Start()
     {
         Making_Map();
-        StartCoroutine(Random_Respawn());
-
+        StartCoroutine(Random_Respawn_P());
     }
-    IEnumerator Random_Respawn()
+
+    public bool Shutdown = true;
+    public void Update()
+    {
+        if (!Trigger[3] && Shutdown)
+        {
+            StopCoroutine(Random_Respawn_P());
+            Debug.Log("∏ÿ√·¥Ÿ");
+            Shutdown = false;
+        }
+    }
+    IEnumerator Random_Respawn_P()
     {
         while (Trigger[3] == true)
         {
@@ -283,9 +293,5 @@ public class Respawn_Player : MonoBehaviour
                 else MAP[i, j] = 0;
             }
         }
-    }
-    protected int[,] Overriding_Map()
-    {
-        return MAP;
     }
 }

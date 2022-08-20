@@ -60,12 +60,18 @@ public class Respawn_Enemy : MonoBehaviour
     {
         Range_Collider = Object_Ground.GetComponent<BoxCollider>();
     }
+    Full_System e;
     public void Start()
     {
         Making_Map();
-        StartCoroutine(Random_Respawn());
+        StartCoroutine(Random_Respawn_E());
     }
-    IEnumerator Random_Respawn()
+    private void Update()
+    {
+        if (!Trigger[3])
+            StopCoroutine(Random_Respawn_E());
+    }
+    IEnumerator Random_Respawn_E()
     { 
         while (Trigger[3] == true)
         {

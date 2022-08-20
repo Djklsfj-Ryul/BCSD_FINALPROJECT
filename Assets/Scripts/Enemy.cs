@@ -42,8 +42,6 @@ public class Enemy : MonoBehaviour
     public void Start()
     {
         res = FindObjectOfType<Respawn_Enemy>();
-        Enemy_Move();
-        Enemy_Move();
     }
     public void Enemy_Move()
     {
@@ -51,43 +49,23 @@ public class Enemy : MonoBehaviour
         if (Full_System.Stamina_Enemy != 0)
         {
             PathFinding((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
-            Moving( Pick_Up);
             Reset((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
-            while(true)
+            while (true)
             {
                 if (!Checking())
                 {
                     Pick_Up = true;
-                    PathFinding(x, y);
-                    if (Moving(Pick_Up))
+                    if(!PathFinding(x, y))
                     {
-                        Debug.Log("Reset");
                         continue;
                     }
-                    Pick_Up = false;
                     break;
                 }
-
             }
-            while (true)
-            {
-                if (Full_System.Stamina_Enemy > 0)
-                {
-                    x = Random.Range(1, (int)res.MAP.GetLength(1) - 1);
-                    y = Random.Range(1, (int)res.MAP.GetLength(0) - 1);
-                    if (res.MAP[y, x] == 0)
-                    {
-                        PathFinding(x, y);
-                        break;
-                    }
-                }
-                else break;
-            }
-            HOW = 0;
         }
         ShowMap();
     }
-    public void PathFinding(int Rand_Pos_x, int Rand_Pos_z)
+    public bool PathFinding(int xx, int zz)
     {
         // NodeArray의 크기 정해주고, isWall, x, y 대입
         sizeX = res.MAP.GetLength(1);
@@ -97,13 +75,13 @@ public class Enemy : MonoBehaviour
         NodeArray = new Node[sizeY, sizeX];
 
         // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
-        Pos_x = (int)res.Rand_Pos[res.Count_num - 1].x;
-        Pos_z = (int)res.Rand_Pos[res.Count_num - 1].z;
+        Pos_x = (int)res.Instant_Enemy.gameObject.transform.position.x;
+        Pos_z = (int)res.Instant_Enemy.gameObject.transform.position.z;
 
         res.MAP[Pos_z, Pos_x] = 0;
 
-        if (HOW == 0)
-            HOW = Distinguish(Rand_Pos_z, Rand_Pos_x, Rand_Pos);
+        if(!Pick_Up)
+            HOW = Distinguish(zz, xx, Rand_Pos);
         for (int j = 0; j < sizeY; j++)
         {
             for (int i = 0; i < sizeX; i++)
@@ -120,7 +98,7 @@ public class Enemy : MonoBehaviour
         //Debug.Log(Pos_z + "," + Pos_x);
         //Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
         StartNode = NodeArray[Pos_z, Pos_x];
-        TargetNode = NodeArray[Rand_Pos_z, Rand_Pos_x];
+        TargetNode = NodeArray[zz, xx];
 
         OpenList = new List<Node>() { StartNode };
         ClosedList = new List<Node>();
@@ -150,7 +128,110 @@ public class Enemy : MonoBehaviour
                 }
                 FinalNodeList.Add(StartNode);
                 FinalNodeList.Reverse();
-                return;
+
+                if (!Pick_Up && Full_System.Stamina_Enemy >= 1)
+                {
+                    if (Full_System.Stamina_Enemy < FinalNodeList.Count * 1)
+                    {
+                        Debug.Log(FinalNodeList[0].y + "," + FinalNodeList[0].x + "에서" + FinalNodeList[FinalNodeList.Count - 1].y + "," + FinalNodeList[FinalNodeList.Count - 1].x + "로의 이동은 불가합니다.");
+                    }
+                    else
+                    {
+                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                    }
+                }
+                else if (Pick_Up && Full_System.Stamina_Enemy >= 1)
+                {
+                    if (Full_System.Stamina_Enemy < FinalNodeList.Count * 2)
+                    {
+                        Debug.Log(FinalNodeList[0].y + "," + FinalNodeList[0].x + "에서" + FinalNodeList[FinalNodeList.Count - 1].y + "," + FinalNodeList[FinalNodeList.Count - 1].x + "로의 이동은 불가합니다.");
+                        res.MAP[FinalNodeList[0].y, FinalNodeList[0].x] = 9;
+                        return false;
+                    }
+                    else
+                    {
+                        if (HOW == 3)
+                        {
+                            Debug.Log("무게 3 이동");
+                            if(FinalNodeList.Count < 4)
+                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
+                            else
+                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 4].x, 21, FinalNodeList[FinalNodeList.Count - 4].y);
+                            res.Instant_Big.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                        }
+                        else if (HOW == 2)
+                        {
+                            Debug.Log("무게 2 이동");
+                            for (int j = 0; j < Respawn_Enemy.Count_Medium; j++)
+                            {
+                                if (Mathf.Ceil(res.manage[0, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[0, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
+                                {
+                                    if (FinalNodeList.Count < 3)
+                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
+                                    else
+                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 3].x, 21, FinalNodeList[FinalNodeList.Count - 3].y);
+                                    res.manage[0,j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                                }
+                            }
+                        }
+                        else if (HOW == 1)
+                        {
+                            Debug.Log("무게 1 이동");
+                            for (int j = 0; j < Respawn_Enemy.Count_Small; j++)
+                            {
+                                if (Mathf.Ceil(res.manage[1, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[1, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
+                                {
+                                    if (FinalNodeList.Count < 2)
+                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
+                                    else
+                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 2].x, 21, FinalNodeList[FinalNodeList.Count - 2].y);
+                                    res.manage[1,j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!Pick_Up)
+                {
+                    Debug.Log("#################");
+                    Rand_Pos_x = xx;
+                    Rand_Pos_z = zz;
+                    Full_System.Stamina_Enemy -= FinalNodeList.Count;
+                    res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
+                    res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
+                    res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
+                }
+                else if(HOW == 3)
+                {
+                    Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+                    if(FinalNodeList.Count < 4)
+                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
+                    else
+                        Pointing(FinalNodeList[FinalNodeList.Count - 4].x, FinalNodeList[FinalNodeList.Count - 4].y, 0);
+                    Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                    Full_System.Stamina_Enemy -= (FinalNodeList.Count * 2);
+                }
+                else if (HOW == 2)
+                {
+                    Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+                    if (FinalNodeList.Count < 3)
+                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
+                    else
+                        Pointing(FinalNodeList[FinalNodeList.Count - 3].x, FinalNodeList[FinalNodeList.Count - 3].y, 0);
+                    Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                    Full_System.Stamina_Enemy -= (FinalNodeList.Count * 2);
+                }
+                else if (HOW == 1)
+                {
+                    Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+                    if (FinalNodeList.Count < 2)
+                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
+                    else
+                        Pointing(FinalNodeList[FinalNodeList.Count - 2].x, FinalNodeList[FinalNodeList.Count - 2].y, 0);
+                    Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                    Full_System.Stamina_Enemy -= (FinalNodeList.Count * 2);
+                }
+                return true;
             }
 
             // ↑ → ↓ ←
@@ -159,68 +240,7 @@ public class Enemy : MonoBehaviour
             OpenListAdd(CurNode.x, CurNode.y - 1);
             OpenListAdd(CurNode.x - 1, CurNode.y);
         }
-    }
-    public bool Moving(bool pick)
-    {
-        for (int i = 0; i < FinalNodeList.Count; i++)
-        {
-            if (!Pick_Up && Full_System.Stamina_Enemy >= 1)
-            {
-                Debug.Log(i + "번째는" + FinalNodeList[i].y + "," + FinalNodeList[i].x);
-                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[i].x, 21, FinalNodeList[i].y);
-                Full_System.Stamina_Enemy--;
-            }
-            else if (Pick_Up && Full_System.Stamina_Enemy >= 1)
-            {
-
-                if (Full_System.Stamina_Enemy < FinalNodeList.Count * HOW)
-                    return true;
-                else
-                {
-                    Debug.Log(i + "번째는" + FinalNodeList[i].y + "," + FinalNodeList[i].x);
-                    if (HOW == 3)
-                    {
-                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 4].x, 21, FinalNodeList[FinalNodeList.Count - 4].y);
-                        res.Instant_Big.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
-                        Pointing(FinalNodeList[FinalNodeList.Count - 4].x, FinalNodeList[FinalNodeList.Count - 4].y, 0);
-                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
-                        Full_System.Stamina_Enemy -= (HOW + 2);
-                    }
-                    else if (HOW == 2)
-                    {
-                        for (int j = 0; j < Respawn_Enemy.Count_Medium; j++)
-                        {
-                            if (Mathf.Ceil(res.manage[0, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[0, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
-                            {
-                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 3].x, 21, FinalNodeList[FinalNodeList.Count - 3].y);
-                                res.manage[0, j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
-                            }
-                        }
-                        Pointing(FinalNodeList[FinalNodeList.Count - 3].x, FinalNodeList[FinalNodeList.Count - 3].y, 0);
-                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
-                        Full_System.Stamina_Enemy -= (HOW + 1);
-                    }
-                    else if (HOW == 1)
-                    {
-                        for (int j = 0; j < Respawn_Enemy.Count_Small; j++)
-                        {
-                            if (Mathf.Ceil(res.manage[1, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[1, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
-                            {
-                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 2].x, 21, FinalNodeList[FinalNodeList.Count - 2].y);
-                                res.manage[1, j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
-                            }
-                        }
-                        Pointing(FinalNodeList[FinalNodeList.Count - 2].x, FinalNodeList[FinalNodeList.Count - 2].y, 0);
-                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
-                        Full_System.Stamina_Enemy -= (HOW + 1);
-                    }
-                }
-            }
-        }
-        res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
-        res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
-        res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
-        return false;
+        return true;
     }
     public void Reset(int x, int y)
     {
@@ -287,8 +307,8 @@ public class Enemy : MonoBehaviour
     }
     public bool Checking()
     {
-        x = Random.Range(1, (int)res.MAP.GetLength(1) - 1);
-        y = Random.Range(1, (int)res.MAP.GetLength(0) - 1);
+        x = Random.Range(3, (int)res.MAP.GetLength(1) - 3);
+        y = Random.Range(3, (int)res.MAP.GetLength(0) - 3);
         if(HOW == 3)
         {
             for (int i = -2; i < 3; i++)
@@ -443,7 +463,7 @@ public class Enemy : MonoBehaviour
             res.MAP[y, x] = 9;
         }
     }
-    void ShowMap()
+    public void ShowMap()
     {
         string a1 = "";
         for (int i = 0; i < 20; i++)
