@@ -41,8 +41,8 @@ public class Respawn_Enemy : MonoBehaviour
     [SerializeField] public GameObject Instant_Small; 
     [SerializeField] public GameObject Instant_Enemy;
 
-    public GameObject[,] manage = new GameObject[2, Count_Small]; 
-
+    public GameObject[,] manage = new GameObject[2, Count_Small];
+    public GameObject CoverImage;
 
     BoxCollider Range_Collider;
 
@@ -64,14 +64,13 @@ public class Respawn_Enemy : MonoBehaviour
     public void Start()
     {
         Making_Map();
-        StartCoroutine(Random_Respawn_E());
     }
     private void Update()
     {
-        if (!Trigger[3])
-            StopCoroutine(Random_Respawn_E());
+        if (!CoverImage.activeSelf)
+            Random_Respawn_E();
     }
-    IEnumerator Random_Respawn_E()
+    void Random_Respawn_E()
     { 
         while (Trigger[3] == true)
         {
@@ -91,7 +90,7 @@ public class Respawn_Enemy : MonoBehaviour
                     Manage[Count_num].y = (int)Rand_Pos[Count_num].z;
                     */
                     Count_num++;
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[0] = false;
             }
@@ -107,7 +106,7 @@ public class Respawn_Enemy : MonoBehaviour
                     Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
                     manage[0, i] = Instant_Medium;
                     Count_num++;
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[1] = false;
             }
@@ -123,7 +122,7 @@ public class Respawn_Enemy : MonoBehaviour
                     Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
                     manage[1, i] = Instant_Small;
                     Count_num++;
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                     
                 }
                 Trigger[2] = false;
@@ -139,7 +138,7 @@ public class Respawn_Enemy : MonoBehaviour
                     Rand_Pos[Count_num] = Return_RandomPosition();
                     Instant_Enemy = Instantiate(Object_Enemy[d], Rand_Pos[Count_num], quaternion);
                     Count_num++;
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[3] = false;
             }

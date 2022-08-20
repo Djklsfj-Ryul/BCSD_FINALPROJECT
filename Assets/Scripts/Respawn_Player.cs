@@ -31,6 +31,15 @@ public class Respawn_Player : MonoBehaviour
     private GameObject Object_Ground;
     BoxCollider Range_Collider;
 
+    public GameObject CoverImage;
+
+
+
+
+
+
+
+
     static public int MAP_X = 20;
     static public int MAP_Z = 20;
     public int[,] MAP = new int[MAP_Z, MAP_X];
@@ -49,20 +58,16 @@ public class Respawn_Player : MonoBehaviour
     public void Start()
     {
         Making_Map();
-        StartCoroutine(Random_Respawn_P());
     }
 
     public bool Shutdown = true;
     public void Update()
     {
-        if (!Trigger[3] && Shutdown)
-        {
-            StopCoroutine(Random_Respawn_P());
-            Debug.Log("∏ÿ√·¥Ÿ");
-            Shutdown = false;
-        }
+        if (!CoverImage.activeSelf)
+            Random_Respawn_P();
+
     }
-    IEnumerator Random_Respawn_P()
+    void Random_Respawn_P()
     {
         while (Trigger[3] == true)
         {
@@ -78,7 +83,7 @@ public class Respawn_Player : MonoBehaviour
                     rand_a *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
                     GameObject Instant_Big = Instantiate(Object_Big[a], Return_RandomPosition(), quaternion);
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[0] = false;
             }
@@ -91,7 +96,7 @@ public class Respawn_Player : MonoBehaviour
                     rand_b *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
                     GameObject Instant_Medium = Instantiate(Object_Medium[b], Return_RandomPosition(), quaternion);
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[1] = false;
             }
@@ -104,7 +109,7 @@ public class Respawn_Player : MonoBehaviour
                     rand_c *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
                     GameObject Instant_Small = Instantiate(Object_Small[c], Return_RandomPosition(), quaternion);
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[2] = false;
             }
@@ -117,7 +122,7 @@ public class Respawn_Player : MonoBehaviour
                     rand_d *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
                     GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), quaternion);
-                    yield return new WaitForSeconds(1f);
+                    //yield return new WaitForSeconds(1f);
                 }
                 Trigger[3] = false;
             }
