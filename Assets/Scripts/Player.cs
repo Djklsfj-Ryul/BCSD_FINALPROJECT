@@ -12,16 +12,17 @@ public class Player : MonoBehaviour
     bool Pick = false;
     RaycastHit hit;
 
+    public GameObject Main_Camera;
     GameObject PickUpObject;
     private static Respawn_Player therespawn;
     void Start()
     {
+        Main_Camera.SetActive(true);
         therespawn = FindObjectOfType<Respawn_Player>();
     }
     void Update()
     {
-        if(!therespawn.Shutdown)
-            Player_Move();
+        Player_Move();
         if (Input.GetKeyDown(KeyCode.Space) && !Pick)
             Pick_Up();
         else if (Input.GetKeyDown(KeyCode.Space) && Pick)
@@ -147,6 +148,7 @@ public class Player : MonoBehaviour
             {
                 GameObject.Find("Main_Camera").transform.position = new Vector3(0, 3.5f, -3.6f);
                 GameObject.Find("Main_Camera").transform.Rotate(-20, 0, 0);
+                Long_Sight = true;
             }
         }
     }
