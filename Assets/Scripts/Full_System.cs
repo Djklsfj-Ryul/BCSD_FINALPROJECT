@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Full_System : MonoBehaviour
 {
+
     public static int Stamina_Player = 30;
     public static int Stamina_Enemy  = 50;
     public static bool finish = false;
@@ -31,6 +32,8 @@ public class Full_System : MonoBehaviour
     void Update()
     {
         Turn_End();
+        if(Input.GetKeyDown(KeyCode.G))
+            player_move = true;
     }
     void Turn_End()
     {
@@ -40,11 +43,10 @@ public class Full_System : MonoBehaviour
             trap = false;
             if(Enemy.em)
             {
-                Debug.Log("턴을 종료합니다.");
+                //Debug.Log("턴을 종료합니다.");
                 Turn--;
                 Point_Check();
                 trap = true;
-                player_move = true;
                 Stamina_Player = 30;
                 Stamina_Enemy = 50;
                 Debug.Log("내 점수 : " + player_point);

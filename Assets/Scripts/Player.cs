@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public GameObject gogo;
+
     public static int posx = 0;
     public static int posy = 0;
     public static int posz = 0;
@@ -38,6 +40,15 @@ public class Player : MonoBehaviour
     {
         Player_Move();
         Drawing_Map();
+
+        if(!Full_System.player_move)
+        {
+            gogo.SetActive(true);
+        }
+        else
+        {
+            gogo.SetActive(false);
+        }
 
         EnScore.text = string.Format($"{ Full_System.enemy_point}");
         MyScore.text = string.Format($"{ Full_System.player_point}");
@@ -216,17 +227,13 @@ public class Player : MonoBehaviour
     }
     void Pick_Down()
     {
-        int x = (int)gameObject.transform.position.x;
-        int z = (int)gameObject.transform.position.z;
-        bool[] Clear = new bool[] { true, true, true };
-
 
         for (int i = 0; i < Respawn_Player.Catridge_Big; i++)
         {
             if (PickUpObject.name == therespawn.Object_Big[i].name + "(Clone)")
             {
-                Point(3,5);
-                Pick = false;
+                if(Point(3,5))
+                    Pick = false;
             }
         }
 
@@ -234,16 +241,16 @@ public class Player : MonoBehaviour
         {
             if (PickUpObject.name == therespawn.Object_Medium[i].name + "(Clone)")
             {
-                Point(2,3);
-                Pick = false;
+                if(Point(2,3))
+                    Pick = false;
             }
         }
         for (int i = 0; i < Respawn_Player.Catridge_Small; i++)
         {
             if (PickUpObject.name == therespawn.Object_Small[i].name + "(Clone)")
             {
-                Point(1,1);
-                Pick = false;
+                if(Point(1,1))
+                    Pick = false;
             }
         }
     }
@@ -283,7 +290,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-    void Point(int num, int large)
+    bool Point(int num, int large)
     {
         int angle = (int)gameObject.transform.rotation.eulerAngles.y;
         int x = (int)gameObject.transform.position.x;
@@ -298,11 +305,6 @@ public class Player : MonoBehaviour
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
                         if (Respawn_Player.MAP[z + dy, x + dx + num] == 0) check++;
-                        else
-                        {
-                            Debug.Log("Can't Pick Down");
-                            return;
-                        }
                     }
                 }
                 if (check == (large * large))
@@ -314,6 +316,11 @@ public class Player : MonoBehaviour
                             else Respawn_Player.MAP[z + dy, x + dx + num] = 7;
                         }
                     }
+                else
+                {
+                    Debug.Log("Can't Pick Down");
+                    return false;
+                }
                 PickUpObject.transform.position = new Vector3(x + num,y,z);
                 break;
             case 90:
@@ -322,11 +329,6 @@ public class Player : MonoBehaviour
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
                         if (Respawn_Player.MAP[z + dy - num, x + dx] == 0) check++;
-                        else
-                        {
-                            Debug.Log("Can't Pick Down");
-                            return;
-                        }
                     }
                 }
                 if (check == (large * large))
@@ -338,6 +340,11 @@ public class Player : MonoBehaviour
                             else Respawn_Player.MAP[z + dy - num, x + dx] = 7;
                         }
                     }
+                else
+                {
+                    Debug.Log("Can't Pick Down");
+                    return false;
+                }
                 PickUpObject.transform.position = new Vector3(x, y, z - num);
                 break;
             case 180:
@@ -346,11 +353,6 @@ public class Player : MonoBehaviour
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
                         if (Respawn_Player.MAP[z + dy - num, x + dx] == 0) check++;
-                        else
-                        {
-                            Debug.Log("Can't Pick Down");
-                            return;
-                        }
                     }
                 }
                 if (check == (large * large))
@@ -362,6 +364,11 @@ public class Player : MonoBehaviour
                             else Respawn_Player.MAP[z + dy, x + dx - num] = 7;
                         }
                     }
+                else
+                {
+                    Debug.Log("Can't Pick Down");
+                    return false;
+                }
                 PickUpObject.transform.position = new Vector3(x - num, y, z);
                 break;
             case 270:
@@ -370,11 +377,6 @@ public class Player : MonoBehaviour
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
                         if (Respawn_Player.MAP[z + dy - num, x + dx] == 0) check++;
-                        else
-                        {
-                            Debug.Log("Can't Pick Down");
-                            return;
-                        }
                     }
                 }
                 if (check == (large * large))
@@ -386,21 +388,17 @@ public class Player : MonoBehaviour
                             else Respawn_Player.MAP[z + dy + num, x + dx] = 7;
                         }
                     }
+                else
+                {
+                    Debug.Log("Can't Pick Down");
+                    return false;
+                }
                 PickUpObject.transform.position = new Vector3(x, y, z + num);
                 break;
         }
         PickUpObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX |
                                                              RigidbodyConstraints.FreezeRotationZ |
                                                              RigidbodyConstraints.FreezeRotationY;
-        string a1 = "";
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-                a1 = a1 + Respawn_Player.MAP[j, i];
-            }
-            //Debug.Log(a1);
-            a1 = "";
-        }
+        return true;
     }
 }

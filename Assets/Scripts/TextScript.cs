@@ -22,13 +22,13 @@ public class TextScript : MonoBehaviour
         {
             EnemySc.text = string.Format($"{ Full_System.enemy_point}");
             PlayerSc.text = string.Format($"{ Full_System.player_point}");
-            TextScore.text = "Player Win";
+            TextScore.text = "Player";
         }
         else if (Full_System.player_point < Full_System.enemy_point)
         {
             EnemySc.text = string.Format($"{ Full_System.enemy_point}");
             PlayerSc.text = string.Format($"{ Full_System.player_point}");
-            TextScore.text = "Enemy Win";
+            TextScore.text = "Enemy";
         }
         else
         {
