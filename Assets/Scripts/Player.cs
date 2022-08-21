@@ -50,6 +50,11 @@ public class Player : MonoBehaviour
             gogo.SetActive(false);
         }
 
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         EnScore.text = string.Format($"{ Full_System.enemy_point}");
         MyScore.text = string.Format($"{ Full_System.player_point}");
 
