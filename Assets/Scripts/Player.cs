@@ -7,7 +7,6 @@ public class Player : MonoBehaviour
     private int posx = 0;
     private int posy = 0;
     private int posz = 0;
-    private bool Long_Sight = false;
 
     bool Pick = false;
     RaycastHit hit;
@@ -35,126 +34,132 @@ public class Player : MonoBehaviour
         posz = (int)Mathf.Ceil(gameObject.transform.position.z);
         int angle = (int)gameObject.transform.rotation.eulerAngles.y;
 
-        if (Input.GetKeyDown(KeyCode.W)) 
+        if (Full_System.player_move)
         {
-            therespawn.MAP[posz, posx] = 0;
-            switch (angle)
+            if (Input.GetKeyDown(KeyCode.W))
             {
-                case 0:
-                    if (Object_Check(posx, posz, 1, 0))
-                    {
-                        if (Pick)
+                Debug.Log(Full_System.Stamina_Player);
+                therespawn.MAP[posz, posx] = 0;
+                switch (angle)
+                {
+                    case 0:
+                        if (Object_Check(posx, posz, 1, 0))
                         {
-                            PickUpObject.transform.position = new Vector3(posx + 1, posy + 3f, posz);
-                            gameObject.transform.position = new Vector3(posx + 1, posy, posz);
-                            Full_System.Stamina_Player -= 2;
-                            posx++;
+                            if (Pick)
+                            {
+                                PickUpObject.transform.position = new Vector3(posx + 1, posy + 3f, posz);
+                                gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                                Full_System.Stamina_Player -= 2;
+                                posx++;
+                            }
+                            else
+                            {
+                                gameObject.transform.position = new Vector3(posx + 1, posy, posz);
+                                Full_System.Stamina_Player--;
+                                posx++;
+                            }
                         }
-                        else
+                        break;
+                    case 90:
+                        if (Object_Check(posx, posz, 0, -1))
                         {
-                            gameObject.transform.position = new Vector3(posx + 1, posy, posz);
-                            Full_System.Stamina_Player--;
-                            posx++;
+                            if (Pick)
+                            {
+                                PickUpObject.transform.position = new Vector3(posx, posy + 3f, posz - 1);
+                                gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                                Full_System.Stamina_Player -= 2;
+                                posz--;
+                            }
+                            else
+                            {
+                                gameObject.transform.position = new Vector3(posx, posy, posz - 1);
+                                Full_System.Stamina_Player--;
+                                posz--;
+                            }
                         }
-                    }
-                    break;
-                case 90:
-                    if (Object_Check(posx, posz, 0, -1))
-                    {
-                        if (Pick)
+                        break;
+                    case 180:
+                        if (Object_Check(posx, posz, -1, 0))
                         {
-                            PickUpObject.transform.position = new Vector3(posx, posy + 3f, posz - 1);
-                            gameObject.transform.position = new Vector3(posx, posy, posz - 1);
-                            Full_System.Stamina_Player -= 2;
-                            posz--;
+                            if (Pick)
+                            {
+                                PickUpObject.transform.position = new Vector3(posx - 1, posy + 3f, posz);
+                                gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                                Full_System.Stamina_Player -= 2;
+                                posx--;
+                            }
+                            else
+                            {
+                                gameObject.transform.position = new Vector3(posx - 1, posy, posz);
+                                Full_System.Stamina_Player--;
+                                posx--;
+                            }
                         }
-                        else
+                        break;
+                    case 270:
+                        if (Object_Check(posx, posz, 0, 1))
                         {
-                            gameObject.transform.position = new Vector3(posx, posy, posz - 1);
-                            Full_System.Stamina_Player--;
-                            posz--;
+                            if (Pick)
+                            {
+                                PickUpObject.transform.position = new Vector3(posx, posy + 3f, posz + 1);
+                                gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                                Full_System.Stamina_Player -= 2;
+                                posz++;
+                            }
+                            else
+                            {
+                                gameObject.transform.position = new Vector3(posx, posy, posz + 1);
+                                Full_System.Stamina_Player--;
+                                posz++;
+                            }
                         }
-                    }
-                    break;
-                case 180:
-                    if (Object_Check(posx, posz, -1, 0))
-                    {
-                        if (Pick)
-                        {
-                            PickUpObject.transform.position = new Vector3(posx - 1, posy + 3f, posz);
-                            gameObject.transform.position = new Vector3(posx - 1, posy, posz);
-                            Full_System.Stamina_Player -= 2;
-                            posx--;
-                        }
-                        else
-                        {
-                            gameObject.transform.position = new Vector3(posx - 1, posy, posz);
-                            Full_System.Stamina_Player--;
-                            posx--;
-                        }
-                    } 
-                    break;
-                case 270:
-                    if (Object_Check(posx, posz, 0, 1))
-                    {
-                        if (Pick)
-                        {
-                            PickUpObject.transform.position = new Vector3(posx, posy + 3f, posz + 1);
-                            gameObject.transform.position = new Vector3(posx, posy, posz + 1);
-                            Full_System.Stamina_Player -= 2;
-                            posz++;
-                        }
-                        else
-                        {
-                            gameObject.transform.position = new Vector3(posx, posy, posz + 1);
-                            Full_System.Stamina_Player--;
-                            posz++;
-                        }
-                    }
-                    break;
+                        break;
+                }
+                therespawn.MAP[posz, posx] = 9;
             }
-            therespawn.MAP[posz, posx] = 9;
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            gameObject.transform.Rotate(0,-90,0);
-            if(Pick)
+            if (Input.GetKeyDown(KeyCode.A))
             {
-                PickUpObject.transform.Rotate(0,-90,0);
+                gameObject.transform.Rotate(0, -90, 0);
+                if (Pick)
+                {
+                    PickUpObject.transform.Rotate(0, -90, 0);
+                }
             }
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            gameObject.transform.Rotate(0, 90, 0);
-            if (Pick)
+            if (Input.GetKeyDown(KeyCode.D))
             {
-                PickUpObject.transform.Rotate(0, +90, 0);
+                gameObject.transform.Rotate(0, 90, 0);
+                if (Pick)
+                {
+                    PickUpObject.transform.Rotate(0, +90, 0);
+                }
+            }
+            if (Input.GetKeyUp(KeyCode.Y))
+            {
+                Debug.Log("턴을 종료하겠습니까?");
+                if (Input.GetKeyDown(KeyCode.Y))
+                    Full_System.Stamina_Player = 0;
             }
         }
-        if (Input.GetKeyUp(KeyCode.Y))
-        {
-            Debug.Log("턴을 종료하겠습니까?");
-            if(Input.GetKeyDown(KeyCode.Y))
-                Full_System.Stamina_Player = 0;
-        }
+        /*
         if (Input.GetKeyDown(KeyCode.R))
         {
             if (Long_Sight)
             {
-                GameObject.Find("Main_Camera").transform.position = new Vector3(0, 0, 0);
-                GameObject.Find("Main_Camera").transform.Rotate(20, 0, 0);
+                GameObject.Find("Main_Camera").transform.position = new Vector3(posx, posy, posz);
+                GameObject.Find("Main_Camera").transform.Rotate(-20, 0, 0);
+                Long_Sight = false;
             }
             else
             {
-                GameObject.Find("Main_Camera").transform.position = new Vector3(0, 3.5f, -3.6f);
-                GameObject.Find("Main_Camera").transform.Rotate(-20, 0, 0);
+                GameObject.Find("Main_Camera").transform.position = new Vector3(posx, posy + 3.5f, posz -3.6f);
+                GameObject.Find("Main_Camera").transform.Rotate(20, 0, 0);
                 Long_Sight = true;
             }
-        }
+        }*/
     }
     bool Object_Check(int posx, int posz, int var_x, int var_y)
     {
-        Debug.Log(posy +","+ posx);
+        //Debug.Log(posy +","+ posx);
         if (therespawn.MAP[posz + var_y, posx + var_x] == 0)
             return true;
         else
@@ -362,7 +367,7 @@ public class Player : MonoBehaviour
             {
                 a1 = a1 +   therespawn.MAP[j, i];
             }
-            Debug.Log(a1);
+            //Debug.Log(a1);
             a1 = "";
         }
     }

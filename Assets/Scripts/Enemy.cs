@@ -43,6 +43,13 @@ public class Enemy : MonoBehaviour
     {
         res = FindObjectOfType<Respawn_Enemy>();
     }
+    public void Update()
+    {
+        if(!Full_System.player_move)
+        {
+            Enemy_Move();
+        }
+    }
     public void Enemy_Move()
     {
         Rand_Pos = Random.Range(0, res.Count_num - 2);

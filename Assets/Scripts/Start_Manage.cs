@@ -15,7 +15,6 @@ public class Start_Manage : MonoBehaviour
     public void OnClickStartButton()
     {
         CoverImage.SetActive(false);
-
         Camera.SetActive(false);
     }
 

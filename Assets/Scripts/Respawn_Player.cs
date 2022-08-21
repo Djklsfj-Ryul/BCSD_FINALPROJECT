@@ -17,7 +17,7 @@ public class Respawn_Player : MonoBehaviour
     [SerializeField]
     static protected int Count_Small = 3;
     [SerializeField]
-    static protected int Count_Enemy = 1;
+    static protected int Count_Player = 1;
 
     [SerializeField]
     public GameObject[] Object_Big = new GameObject[Catridge_Big];
@@ -26,19 +26,12 @@ public class Respawn_Player : MonoBehaviour
     [SerializeField]
     public GameObject[] Object_Small = new GameObject[Catridge_Small];
     [SerializeField]
-    public GameObject[] Object_Enemy = new GameObject[Catridge_Enemy];
+    public GameObject[] Object_Player = new GameObject[Catridge_Enemy];
     [SerializeField]
     private GameObject Object_Ground;
     BoxCollider Range_Collider;
 
     public GameObject CoverImage;
-
-
-
-
-
-
-
 
     static public int MAP_X = 20;
     static public int MAP_Z = 20;
@@ -60,7 +53,6 @@ public class Respawn_Player : MonoBehaviour
         Making_Map();
     }
 
-    public bool Shutdown = true;
     public void Update()
     {
         if (!CoverImage.activeSelf)
@@ -115,13 +107,13 @@ public class Respawn_Player : MonoBehaviour
             }
             else if (Trigger[3] == true)
             {
-                for (int i = 0; i < Count_Enemy; i++)
+                for (int i = 0; i < Count_Player; i++)
                 {
                     int d = Random.Range(0, Catridge_Enemy);
                     int rand_d = Random.Range(1, 5);
                     rand_d *= 90;
                     Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
-                    GameObject Instant_Enemy = Instantiate(Object_Enemy[d], Return_RandomPosition(), quaternion);
+                    GameObject Instant_Enemy = Instantiate(Object_Player[d], Return_RandomPosition(), quaternion);
                     //yield return new WaitForSeconds(1f);
                 }
                 Trigger[3] = false;
