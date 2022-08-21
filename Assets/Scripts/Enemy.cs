@@ -49,18 +49,18 @@ public class Enemy : MonoBehaviour
     }
     public void Update()
     {
-        if(!Full_System.player_move)
+        if(!Full_System.trap)
         {
-            Debug.Log("#############################################");
+            Debug.Log(Full_System.trap);
             Enemy_Move();
             em = true;
-            Respawn_Enemy.Count_num = 0;
+            Full_System.trap = true;
         }
     }
     public void Enemy_Move()
     {
-        Debug.Log("움직임");
         Rand_Pos = Random.Range(0, Respawn_Enemy.Count_num - 2);
+        Debug.Log((int)res.Rand_Pos[Rand_Pos].x +","+ (int)res.Rand_Pos[Rand_Pos].z);
         if (Full_System.Stamina_Enemy != 0)
         {
             PathFinding((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
@@ -79,6 +79,8 @@ public class Enemy : MonoBehaviour
                     break;
                 }
             }
+            Pick_Up = false;
+            HOW = 0;
         }
         //ShowMap();
     }
@@ -94,6 +96,8 @@ public class Enemy : MonoBehaviour
         // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
         Pos_x = (int)res.Instant_Enemy.gameObject.transform.position.x;
         Pos_z = (int)res.Instant_Enemy.gameObject.transform.position.z;
+
+        //Debug.Log(Pos_z + "," + Pos_x);
 
         Respawn_Enemy.MAP[Pos_z, Pos_x] = 0;
 
@@ -169,10 +173,27 @@ public class Enemy : MonoBehaviour
                     {
                         if (HOW == 3)
                         {
-                            if(FinalNodeList.Count < 4)
+                            if (FinalNodeList.Count < 4)
+                            {
                                 res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
+                                Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
+                            }
                             else
-                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 4].x, 21, FinalNodeList[FinalNodeList.Count - 4].y);
+                            {
+                                int i = 4;
+                                while (true)
+                                {
+                                    if (Respawn_Enemy.MAP[FinalNodeList[FinalNodeList.Count - i].y, FinalNodeList[FinalNodeList.Count - i].x] != 0)
+                                        i++;
+                                    else
+                                    {
+                                        Pointing(FinalNodeList[FinalNodeList.Count - i].x, FinalNodeList[FinalNodeList.Count - i].y, 0);
+                                        Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - i].x, 21, FinalNodeList[FinalNodeList.Count - i].y);
+                                        break;
+                                    }
+                                }
+                            }
                             res.Instant_Big.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
                         }
                         else if (HOW == 2)
@@ -182,9 +203,26 @@ public class Enemy : MonoBehaviour
                                 if (Mathf.Ceil(res.manage[0, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[0, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
                                 {
                                     if (FinalNodeList.Count < 3)
+                                    {
                                         res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
+                                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
+                                    }
                                     else
-                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 3].x, 21, FinalNodeList[FinalNodeList.Count - 3].y);
+                                    {
+                                        int i = 3;
+                                        while (true)
+                                        {
+                                            if (Respawn_Enemy.MAP[FinalNodeList[FinalNodeList.Count - i].y, FinalNodeList[FinalNodeList.Count - i].x] != 0)
+                                                i++;
+                                            else
+                                            {
+                                                Pointing(FinalNodeList[FinalNodeList.Count - i].x, FinalNodeList[FinalNodeList.Count - i].y, 0);
+                                                Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - i].x, 21, FinalNodeList[FinalNodeList.Count - i].y);
+                                                break;
+                                            }
+                                        }
+                                    }
                                     res.manage[0,j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
                                 }
                             }
@@ -196,9 +234,26 @@ public class Enemy : MonoBehaviour
                                 if (Mathf.Ceil(res.manage[1, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[1, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
                                 {
                                     if (FinalNodeList.Count < 2)
+                                    {
                                         res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
+                                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
+                                    }
                                     else
-                                        res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 2].x, 21, FinalNodeList[FinalNodeList.Count - 2].y);
+                                    {
+                                        int i = 2;
+                                        while (true)
+                                        {
+                                            if (Respawn_Enemy.MAP[FinalNodeList[FinalNodeList.Count - i].y, FinalNodeList[FinalNodeList.Count - i].x] != 0)
+                                                i++;
+                                            else
+                                            {
+                                                Pointing(FinalNodeList[FinalNodeList.Count - i].x, FinalNodeList[FinalNodeList.Count - i].y, 0);
+                                                Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
+                                                res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - i].x, 21, FinalNodeList[FinalNodeList.Count - i].y);
+                                                break;
+                                            }
+                                        }
+                                    }
                                     res.manage[1,j].gameObject.transform.position = new Vector3(FinalNodeList[FinalNodeList.Count - 1].x, 21, FinalNodeList[FinalNodeList.Count - 1].y);
                                 }
                             }
@@ -216,30 +271,14 @@ public class Enemy : MonoBehaviour
                 }
                 else if(HOW == 3)
                 {
-                    if(FinalNodeList.Count < 4)
-                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
-                    else
-                        Pointing(FinalNodeList[FinalNodeList.Count - 4].x, FinalNodeList[FinalNodeList.Count - 4].y, 0);
-                    Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
                     Full_System.Stamina_Enemy -= (FinalNodeList.Count * 2);
                 }
                 else if (HOW == 2)
                 {
-                    if (FinalNodeList.Count < 3)
-                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
-                    else
-                        Pointing(FinalNodeList[FinalNodeList.Count - 3].x, FinalNodeList[FinalNodeList.Count - 3].y, 0);
-                    Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
                     Full_System.Stamina_Enemy -= (FinalNodeList.Count * 2);
                 }
                 else if (HOW == 1)
                 {
-                   // Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
-                    if (FinalNodeList.Count < 2)
-                        Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
-                    else
-                        Pointing(FinalNodeList[FinalNodeList.Count - 2].x, FinalNodeList[FinalNodeList.Count - 2].y, 0);
-                    Pointing(FinalNodeList[FinalNodeList.Count - 1].x, FinalNodeList[FinalNodeList.Count - 1].y, HOW);
                     Full_System.Stamina_Enemy -= (FinalNodeList.Count * 2);
                 }
                 return true;

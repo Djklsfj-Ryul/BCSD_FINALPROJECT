@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Respawn_Enemy_3 : MonoBehaviour
+public class TextScript : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

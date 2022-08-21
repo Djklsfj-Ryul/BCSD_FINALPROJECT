@@ -127,11 +127,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b12edc68da7ca9a4e8b80f75532e3c0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posx: 0
-  posy: 0
-  posz: 0
   Main_Camera: {fileID: 4458085349627549519}
-  enemy: {fileID: 4376416503991229278, guid: c391ecf8f491c2b40bda8a3395baf2f0, type: 3}
+  Camera: {fileID: 4458085349627549519}
+  Enemy_Script: {fileID: 0}
 --- !u!1 &4458085349627549519
 GameObject:
   m_ObjectHideFlags: 0

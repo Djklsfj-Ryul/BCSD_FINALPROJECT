@@ -6,6 +6,9 @@ public class Full_System : MonoBehaviour
 {
     public static int Stamina_Player = 30;
     public static int Stamina_Enemy  = 50;
+    public static bool finish = false;
+
+    public static bool trap = true;
 
     public static int Phase = 3;
     public int Turn = 2;
@@ -34,27 +37,31 @@ public class Full_System : MonoBehaviour
         if (Stamina_Player == 0 && Turn != 0)
         {
             player_move = false;
+            trap = false;
             if(Enemy.em)
             {
                 Debug.Log("턴을 종료합니다.");
                 Turn--;
                 Point_Check();
+                trap = true;
+                player_move = true;
                 Stamina_Player = 30;
                 Stamina_Enemy = 50;
                 Debug.Log("내 점수 : " + player_point);
                 Debug.Log("적 점수 : " + enemy_point);
-                player_move = true;
+                Enemy.em = false;
             }
         }
         else if (Stamina_Player == 0 && Turn == 0)
         {
             Debug.Log("페이즈를 종료합니다.");
             Phase--;
-            Turn = 2;
+            Turn = 3;
         }
         else if(Phase == 0)
         {
             Debug.Log("게임을 종료합니다.");
+            finish = true;
         }
     }
     void Point_Check()

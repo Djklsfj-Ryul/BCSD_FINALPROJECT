@@ -12,9 +12,7 @@ public class Player : MonoBehaviour
     RaycastHit hit;
 
     public GameObject Main_Camera;
-    GameObject PickUpObject;    
-
-    public GameObject Enemy_Script;
+    GameObject PickUpObject;
     private static Respawn_Player therespawn;
     public static Enemy therespawn_E;
 
@@ -30,6 +28,10 @@ public class Player : MonoBehaviour
             Pick_Up();
         else if (Input.GetKeyDown(KeyCode.Space) && Pick)
             Pick_Down();
+        if(Full_System.finish)
+        {
+            Main_Camera.SetActive(false);
+        }
     }
     void Player_Move()
     {

@@ -78,12 +78,14 @@ public class Respawn_Enemy : MonoBehaviour
         }
         if (Full_System.Phase == 2 && Phase_2)
         {
+            Count_num = 0;
             Phase_2 = false;
             Clear();
             Random_Respawn_E1();
         }
         if (Full_System.Phase == 1 && Phase_1)
         {
+            Count_num = 0;
             Phase_1 = false;
             Clear();
             Random_Respawn_E2();
