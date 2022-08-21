@@ -37,7 +37,7 @@ public class Full_System : MonoBehaviour
     }
     void Turn_End()
     {
-        if (Stamina_Player == 0 && Turn != 0)
+        if (Stamina_Player <= 0 && Turn != 0)
         {
             player_move = false;
             trap = false;
@@ -54,7 +54,7 @@ public class Full_System : MonoBehaviour
                 Enemy.em = false;
             }
         }
-        else if (Stamina_Player == 0 && Turn == 0)
+        else if (Stamina_Player <= 0 && Turn == 0)
         {
             Debug.Log("페이즈를 종료합니다.");
             Phase--;
