@@ -15,17 +15,24 @@ public class Player : MonoBehaviour
     bool Pick = false;
     RaycastHit hit;
 
+    public GameObject Enemy_Image;
+    public GameObject Big_Image;
+    public GameObject[] Medium_Image;
+    public GameObject[] Small_Image;
+
     public GameObject Main_Camera;
     GameObject PickUpObject;
     public Text MyScore;
     public Text EnScore;
     private static Respawn_Player therespawn;
     public static Enemy therespawn_E;
+    private static Respawn_Enemy res;
 
     void Start()
     {
         Main_Camera.SetActive(true);
         therespawn = FindObjectOfType<Respawn_Player>();
+        res = FindObjectOfType<Respawn_Enemy>();
     }
     void Update()
     {
@@ -46,14 +53,13 @@ public class Player : MonoBehaviour
     }
     void Drawing_Map()
     {
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-
-            }
-        }
-        MAP_IMAGE.GetComponent<RectTransform>().anchoredPosition = new Vector3(1500, 0, -350);
+        Big_Image.GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[0].x * 10) - 100, (res.Rand_Pos[0].z * 10) - 100);
+        Medium_Image[0].GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[1].x * 10) - 100, (res.Rand_Pos[1].z * 10) - 100);
+        Medium_Image[1].GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[2].x * 10) - 100, (res.Rand_Pos[2].z * 10) - 100);
+        Small_Image[0].GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[3].x * 10) - 100, (res.Rand_Pos[3].z * 10) - 100);
+        Small_Image[1].GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[4].x * 10) - 100, (res.Rand_Pos[4].z * 10) - 100);
+        Small_Image[2].GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[5].x * 10) - 100, (res.Rand_Pos[5].z * 10) - 100);
+        Enemy_Image.GetComponent<RectTransform>().anchoredPosition = new Vector3((res.Rand_Pos[6].x * 10) - 100, (res.Rand_Pos[6].z * 10) - 100);
     }
     void Player_Move()
     {
@@ -66,7 +72,6 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.W))
             {
-                Debug.Log(Full_System.Stamina_Player);
                 Respawn_Player.MAP[posz, posx] = 0;
                 switch (angle)
                 {
