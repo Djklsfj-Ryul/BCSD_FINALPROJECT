@@ -35,7 +35,7 @@ public class Respawn_Player : MonoBehaviour
 
     static public int MAP_X = 20;
     static public int MAP_Z = 20;
-    public int[,] MAP = new int[MAP_Z, MAP_X];
+    public static int[,] MAP = new int[MAP_Z, MAP_X];
 
     int range_X = 0;
     int range_Z = 0;
@@ -57,7 +57,18 @@ public class Respawn_Player : MonoBehaviour
     {
         if (!CoverImage.activeSelf)
             Random_Respawn_P();
-
+        if (Enemy.em)
+            Clear();
+    }
+    void Clear()
+    {
+        for (int i = 1; i < 19; i++)
+        {
+            for (int j = 1; j < 19; j++)
+            {
+                MAP[j, i] = 0;
+            }
+        }
     }
     void Random_Respawn_P()
     {

@@ -48,7 +48,7 @@ public class Respawn_Enemy : MonoBehaviour
 
     static int MAP_X = 20;
     static int MAP_Z = 20;
-    public int[,] MAP = new int[MAP_X, MAP_Z];
+    public static int[,] MAP = new int[MAP_X, MAP_Z];
 
     int range_X = 0;
     int range_Z = 0;
@@ -69,6 +69,25 @@ public class Respawn_Enemy : MonoBehaviour
     {
         if (!CoverImage.activeSelf)
             Random_Respawn_E();
+        if (Enemy.em && Full_System.player_move)
+            Clear();
+    }
+    void Clear()
+    {
+        for (int i = 1; i < 19; i++)
+        {
+            for (int j = 1; j < 19; j++)
+            {
+                MAP[j, i] = 0;
+            }
+        }
+        Destroy(Instant_Big);
+        Destroy(manage[0, 0]);
+        Destroy(manage[0, 1]);
+        Destroy(manage[1, 0]);
+        Destroy(manage[1, 1]);
+        Destroy(manage[1, 2]);
+        Destroy(Instant_Enemy);
     }
     void Random_Respawn_E()
     { 

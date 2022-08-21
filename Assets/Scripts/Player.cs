@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private int posx = 0;
-    private int posy = 0;
-    private int posz = 0;
+    public static int posx = 0;
+    public static int posy = 0;
+    public static int posz = 0;
 
     bool Pick = false;
     RaycastHit hit;
 
     public GameObject Main_Camera;
-    GameObject PickUpObject;
+    GameObject PickUpObject;    
+
+    public GameObject Enemy_Script;
     private static Respawn_Player therespawn;
+    public static Enemy therespawn_E;
+
     void Start()
     {
         Main_Camera.SetActive(true);
@@ -39,7 +43,7 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.W))
             {
                 Debug.Log(Full_System.Stamina_Player);
-                therespawn.MAP[posz, posx] = 0;
+                Respawn_Player.MAP[posz, posx] = 0;
                 switch (angle)
                 {
                     case 0:
@@ -115,7 +119,7 @@ public class Player : MonoBehaviour
                         }
                         break;
                 }
-                therespawn.MAP[posz, posx] = 9;
+                Respawn_Player.MAP[posz, posx] = 9;
             }
             if (Input.GetKeyDown(KeyCode.A))
             {
@@ -135,9 +139,7 @@ public class Player : MonoBehaviour
             }
             if (Input.GetKeyUp(KeyCode.Y))
             {
-                Debug.Log("턴을 종료하겠습니까?");
-                if (Input.GetKeyDown(KeyCode.Y))
-                    Full_System.Stamina_Player = 0;
+                Full_System.Stamina_Player = 0;
             }
         }
         /*
@@ -160,7 +162,7 @@ public class Player : MonoBehaviour
     bool Object_Check(int posx, int posz, int var_x, int var_y)
     {
         //Debug.Log(posy +","+ posx);
-        if (therespawn.MAP[posz + var_y, posx + var_x] == 0)
+        if (Respawn_Player.MAP[posz + var_y, posx + var_x] == 0)
             return true;
         else
             return false;
@@ -225,7 +227,7 @@ public class Player : MonoBehaviour
                 {
                     for (int dx = -2; dx < 3; dx++)
                     {
-                        therespawn.MAP[(int)PickUpObject.transform.position.z + dy, (int)PickUpObject.transform.position.x + dx] = 0;
+                        Respawn_Player.MAP[(int)PickUpObject.transform.position.z + dy, (int)PickUpObject.transform.position.x + dx] = 0;
                     }
                 }
             } 
@@ -238,7 +240,7 @@ public class Player : MonoBehaviour
                 {
                     for (int dx = -1; dx < 2; dx++)
                     {
-                        therespawn.MAP[(int)PickUpObject.transform.position.z + dy, (int)PickUpObject.transform.position.x + dx] = 0;
+                        Respawn_Player.MAP[(int)PickUpObject.transform.position.z + dy, (int)PickUpObject.transform.position.x + dx] = 0;
                     }
                 }
             }
@@ -247,7 +249,7 @@ public class Player : MonoBehaviour
         {
             if (PickUpObject.name == therespawn.Object_Small[i].name + "(Clone)")
             {
-                therespawn.MAP[(int)PickUpObject.transform.position.z, (int)PickUpObject.transform.position.x] = 0;
+                Respawn_Player.MAP[(int)PickUpObject.transform.position.z, (int)PickUpObject.transform.position.x] = 0;
             }
         }
     }
@@ -265,7 +267,7 @@ public class Player : MonoBehaviour
                 {
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
-                        if (therespawn.MAP[z + dy, x + dx + num] == 0) check++;
+                        if (Respawn_Player.MAP[z + dy, x + dx + num] == 0) check++;
                         else
                         {
                             Debug.Log("Can't Pick Down");
@@ -278,8 +280,8 @@ public class Player : MonoBehaviour
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
                         {
-                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy, x + dx + num] = 8;
-                            else                    therespawn.MAP[z + dy, x + dx + num] = 7;
+                            if (dx == 0 && dy == 0) Respawn_Player.MAP[z + dy, x + dx + num] = 8;
+                            else Respawn_Player.MAP[z + dy, x + dx + num] = 7;
                         }
                     }
                 PickUpObject.transform.position = new Vector3(x + num,y,z);
@@ -289,7 +291,7 @@ public class Player : MonoBehaviour
                 {
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
-                        if (therespawn.MAP[z + dy - num, x + dx] == 0) check++;
+                        if (Respawn_Player.MAP[z + dy - num, x + dx] == 0) check++;
                         else
                         {
                             Debug.Log("Can't Pick Down");
@@ -302,8 +304,8 @@ public class Player : MonoBehaviour
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
                         {
-                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy - num, x + dx] = 8;
-                            else                    therespawn.MAP[z + dy - num, x + dx] = 7;
+                            if (dx == 0 && dy == 0) Respawn_Player.MAP[z + dy - num, x + dx] = 8;
+                            else Respawn_Player.MAP[z + dy - num, x + dx] = 7;
                         }
                     }
                 PickUpObject.transform.position = new Vector3(x, y, z - num);
@@ -313,7 +315,7 @@ public class Player : MonoBehaviour
                 {
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
-                        if (therespawn.MAP[z + dy - num, x + dx] == 0) check++;
+                        if (Respawn_Player.MAP[z + dy - num, x + dx] == 0) check++;
                         else
                         {
                             Debug.Log("Can't Pick Down");
@@ -326,8 +328,8 @@ public class Player : MonoBehaviour
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
                         {
-                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy, x + dx - num] = 8;
-                            else                    therespawn.MAP[z + dy, x + dx - num] = 7;
+                            if (dx == 0 && dy == 0) Respawn_Player.MAP[z + dy, x + dx - num] = 8;
+                            else Respawn_Player.MAP[z + dy, x + dx - num] = 7;
                         }
                     }
                 PickUpObject.transform.position = new Vector3(x - num, y, z);
@@ -337,7 +339,7 @@ public class Player : MonoBehaviour
                 {
                     for (int dx = -(num - 1); dx < num; dx++)
                     {
-                        if (therespawn.MAP[z + dy - num, x + dx] == 0) check++;
+                        if (Respawn_Player.MAP[z + dy - num, x + dx] == 0) check++;
                         else
                         {
                             Debug.Log("Can't Pick Down");
@@ -350,8 +352,8 @@ public class Player : MonoBehaviour
                     {
                         for (int dx = -(num - 1); dx < num; dx++)
                         {
-                            if (dx == 0 && dy == 0) therespawn.MAP[z + dy + num, x + dx] = 8;
-                            else                    therespawn.MAP[z + dy + num, x + dx] = 7;
+                            if (dx == 0 && dy == 0) Respawn_Player.MAP[z + dy + num, x + dx] = 8;
+                            else Respawn_Player.MAP[z + dy + num, x + dx] = 7;
                         }
                     }
                 PickUpObject.transform.position = new Vector3(x, y, z + num);
@@ -365,7 +367,7 @@ public class Player : MonoBehaviour
         {
             for (int j = 0; j < 20; j++)
             {
-                a1 = a1 +   therespawn.MAP[j, i];
+                a1 = a1 + Respawn_Player.MAP[j, i];
             }
             //Debug.Log(a1);
             a1 = "";

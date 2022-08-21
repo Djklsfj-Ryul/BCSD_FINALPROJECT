@@ -683,6 +683,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1124133787}
   - component: {fileID: 1124133786}
+  - component: {fileID: 1124133789}
+  - component: {fileID: 1124133788}
   m_Layer: 0
   m_Name: Random_Manager
   m_TagString: Untagged
@@ -754,6 +756,30 @@ Transform:
   m_Father: {fileID: 1577167227}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1124133788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124133785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6947f70ce240b94e97e79a71ae5f9e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1124133789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124133785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c1ee04071fc166409c17b56ff31c16b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1483996585
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,6 +812,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Phase: 3
   Turn: 3
+  player_point: 0
+  enemy_point: 0
 --- !u!4 &1483996587
 Transform:
   m_ObjectHideFlags: 0
@@ -1064,7 +1092,7 @@ MonoBehaviour:
   - {fileID: 6313062612531795306, guid: 861cc86731943ec45bd756d789cc0554, type: 3}
   Object_Small:
   - {fileID: 6008263406473289123, guid: fb27bcfb3fba654429c3364e412ce570, type: 3}
-  Object_Enemy:
+  Object_Player:
   - {fileID: 2512454866844805743, guid: b276c900332c70f4d8750617bb318c0d, type: 3}
   Object_Ground: {fileID: 1922023822}
   CoverImage: {fileID: 884248938}

@@ -27,12 +27,15 @@ public class Enemy : MonoBehaviour
     public List<Node> FinalNodeList;
     public int HOW = 0;
 
+    public static bool em = false;
+
     bool Pick_Up = false;
     bool Trigger = true;
+    bool plmove = true;
     int Rand_Pos;
     int sizeX, sizeY;
     int x, y;
-    int Pos_x, Pos_z;
+    public static int Pos_x, Pos_z;
     int Rand_Pos_x, Rand_Pos_z;
 
     Node[,] NodeArray;
@@ -45,13 +48,16 @@ public class Enemy : MonoBehaviour
     }
     public void Update()
     {
-        if(!Full_System.player_move)
+        if(!Full_System.player_move && plmove)
         {
             Enemy_Move();
+            plmove = false;
+            em = true;
         }
     }
     public void Enemy_Move()
     {
+        Debug.Log("움직임");
         Rand_Pos = Random.Range(0, res.Count_num - 2);
         if (Full_System.Stamina_Enemy != 0)
         {
@@ -64,19 +70,21 @@ public class Enemy : MonoBehaviour
                     Pick_Up = true;
                     if(!PathFinding(x, y))
                     {
+                        Pos_x = (int)Mathf.Ceil( res.Instant_Enemy.gameObject.transform.position.x);
+                        Pos_z = (int)Mathf.Ceil(res.Instant_Enemy.gameObject.transform.position.z);
                         continue;
                     }
                     break;
                 }
             }
         }
-        ShowMap();
+        //ShowMap();
     }
     public bool PathFinding(int xx, int zz)
     {
         // NodeArray의 크기 정해주고, isWall, x, y 대입
-        sizeX = res.MAP.GetLength(1);
-        sizeY = res.MAP.GetLength(0);
+        sizeX = Respawn_Enemy.MAP.GetLength(1);
+        sizeY = Respawn_Enemy.MAP.GetLength(0);
         bottomLeft = new Vector3(0, 0, sizeY);
         topRight = new Vector3(sizeX, 0, 0);
         NodeArray = new Node[sizeY, sizeX];
@@ -85,7 +93,7 @@ public class Enemy : MonoBehaviour
         Pos_x = (int)res.Instant_Enemy.gameObject.transform.position.x;
         Pos_z = (int)res.Instant_Enemy.gameObject.transform.position.z;
 
-        res.MAP[Pos_z, Pos_x] = 0;
+        Respawn_Enemy.MAP[Pos_z, Pos_x] = 0;
 
         if(!Pick_Up)
             HOW = Distinguish(zz, xx, Rand_Pos);
@@ -95,7 +103,7 @@ public class Enemy : MonoBehaviour
             {
                 bool isWall = false;
 
-                if (res.MAP[j, i] == 7 || res.MAP[j, i] == 8)
+                if (Respawn_Enemy.MAP[j, i] == 7 || Respawn_Enemy.MAP[j, i] == 8)
                 {
                     isWall = true;
                 }
@@ -140,7 +148,7 @@ public class Enemy : MonoBehaviour
                 {
                     if (Full_System.Stamina_Enemy < FinalNodeList.Count * 1)
                     {
-                        Debug.Log(FinalNodeList[0].y + "," + FinalNodeList[0].x + "에서" + FinalNodeList[FinalNodeList.Count - 1].y + "," + FinalNodeList[FinalNodeList.Count - 1].x + "로의 이동은 불가합니다.");
+                        //Debug.Log(FinalNodeList[0].y + "," + FinalNodeList[0].x + "에서" + FinalNodeList[FinalNodeList.Count - 1].y + "," + FinalNodeList[FinalNodeList.Count - 1].x + "로의 이동은 불가합니다.");
                     }
                     else
                     {
@@ -151,15 +159,14 @@ public class Enemy : MonoBehaviour
                 {
                     if (Full_System.Stamina_Enemy < FinalNodeList.Count * 2)
                     {
-                        Debug.Log(FinalNodeList[0].y + "," + FinalNodeList[0].x + "에서" + FinalNodeList[FinalNodeList.Count - 1].y + "," + FinalNodeList[FinalNodeList.Count - 1].x + "로의 이동은 불가합니다.");
-                        res.MAP[FinalNodeList[0].y, FinalNodeList[0].x] = 9;
+                        //Debug.Log(FinalNodeList[0].y + "," + FinalNodeList[0].x + "에서" + FinalNodeList[FinalNodeList.Count - 1].y + "," + FinalNodeList[FinalNodeList.Count - 1].x + "로의 이동은 불가합니다.");
+                        Respawn_Enemy.MAP[FinalNodeList[0].y, FinalNodeList[0].x] = 9;
                         return false;
                     }
                     else
                     {
                         if (HOW == 3)
                         {
-                            Debug.Log("무게 3 이동");
                             if(FinalNodeList.Count < 4)
                                 res.Instant_Enemy.gameObject.transform.position = new Vector3(FinalNodeList[0].x, 21, FinalNodeList[0].y);
                             else
@@ -168,7 +175,6 @@ public class Enemy : MonoBehaviour
                         }
                         else if (HOW == 2)
                         {
-                            Debug.Log("무게 2 이동");
                             for (int j = 0; j < Respawn_Enemy.Count_Medium; j++)
                             {
                                 if (Mathf.Ceil(res.manage[0, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[0, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
@@ -183,7 +189,6 @@ public class Enemy : MonoBehaviour
                         }
                         else if (HOW == 1)
                         {
-                            Debug.Log("무게 1 이동");
                             for (int j = 0; j < Respawn_Enemy.Count_Small; j++)
                             {
                                 if (Mathf.Ceil(res.manage[1, j].transform.position.x) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].x) && Mathf.Ceil(res.manage[1, j].transform.position.z) == Mathf.Ceil(res.Rand_Pos[Rand_Pos].z))
@@ -200,17 +205,15 @@ public class Enemy : MonoBehaviour
                 }
                 if (!Pick_Up)
                 {
-                    Debug.Log("#################");
                     Rand_Pos_x = xx;
                     Rand_Pos_z = zz;
                     Full_System.Stamina_Enemy -= FinalNodeList.Count;
                     res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
                     res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
-                    res.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
+                    Respawn_Enemy.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
                 }
                 else if(HOW == 3)
                 {
-                    Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
                     if(FinalNodeList.Count < 4)
                         Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
                     else
@@ -220,7 +223,6 @@ public class Enemy : MonoBehaviour
                 }
                 else if (HOW == 2)
                 {
-                    Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
                     if (FinalNodeList.Count < 3)
                         Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
                     else
@@ -230,7 +232,7 @@ public class Enemy : MonoBehaviour
                 }
                 else if (HOW == 1)
                 {
-                    Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
+                   // Debug.Log(Rand_Pos_z + "," + Rand_Pos_x);
                     if (FinalNodeList.Count < 2)
                         Pointing(FinalNodeList[0].x, FinalNodeList[0].y, 0);
                     else
@@ -259,14 +261,14 @@ public class Enemy : MonoBehaviour
                 {
                     if (dx == 3 || dx == -3 || dy == 3 || dy == -3)
                     {
-                        if (res.MAP[y + dy, x + dx] == 5)
+                        if (Respawn_Enemy.MAP[y + dy, x + dx] == 5)
                         {
-                            res.MAP[y + dy, x + dx] = 0;
+                            Respawn_Enemy.MAP[y + dy, x + dx] = 0;
                         }
                     }
                     else
                     {
-                        res.MAP[y + dy, x + dx] = 0;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 0;
                     }
                 }
             }
@@ -279,14 +281,14 @@ public class Enemy : MonoBehaviour
                 {
                     if (dx == 2 || dx == -2 || dy == 2 || dy == -2)
                     {
-                        if (res.MAP[y + dy, x + dx] == 5)
+                        if (Respawn_Enemy.MAP[y + dy, x + dx] == 5)
                         {
-                            res.MAP[y + dy, x + dx] = 0;
+                            Respawn_Enemy.MAP[y + dy, x + dx] = 0;
                         }
                     }
                     else
                     {
-                        res.MAP[y + dy, x + dx] = 0;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 0;
                     }
                 }
             }
@@ -299,14 +301,14 @@ public class Enemy : MonoBehaviour
                 {
                     if (dx == 1 || dx == -1 || dy == 1 || dy == -1)
                     {
-                        if (res.MAP[y + dy, x + dx] == 5)
+                        if (Respawn_Enemy.MAP[y + dy, x + dx] == 5)
                         {
-                            res.MAP[y + dy, x + dx] = 0;
+                            Respawn_Enemy.MAP[y + dy, x + dx] = 0;
                         }
                     }
                     else
                     {
-                        res.MAP[y + dy, x + dx] = 0;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 0;
                     }
                 }
             }
@@ -314,17 +316,17 @@ public class Enemy : MonoBehaviour
     }
     public bool Checking()
     {
-        x = Random.Range(3, (int)res.MAP.GetLength(1) - 3);
-        y = Random.Range(3, (int)res.MAP.GetLength(0) - 3);
+        x = Random.Range(3, (int)Respawn_Enemy.MAP.GetLength(1) - 3);
+        y = Random.Range(3, (int)Respawn_Enemy.MAP.GetLength(0) - 3);
         if(HOW == 3)
         {
             for (int i = -2; i < 3; i++)
             {
                 for (int j = -2; j < 3; j++)
                 {
-                    if (y + j >= (int)res.MAP.GetLength(0) || y + j < 0 || x + i < 0 || x + i >= (int)res.MAP.GetLength(1))
+                    if (y + j >= (int)Respawn_Enemy.MAP.GetLength(0) || y + j < 0 || x + i < 0 || x + i >= (int)Respawn_Enemy.MAP.GetLength(1))
                         return true;
-                    if (res.MAP[y + j, x + i] != 0)
+                    if (Respawn_Enemy.MAP[y + j, x + i] != 0)
                         return true;
                 }
             }
@@ -336,9 +338,9 @@ public class Enemy : MonoBehaviour
             {
                 for (int j = -1; j < 2; j++)
                 {
-                    if (y + j >= (int)res.MAP.GetLength(0) || y + j < 0 || x + i < 0 || x + i >= (int)res.MAP.GetLength(1))
+                    if (y + j >= (int)Respawn_Enemy.MAP.GetLength(0) || y + j < 0 || x + i < 0 || x + i >= (int)Respawn_Enemy.MAP.GetLength(1))
                         return true;
-                    if (res.MAP[y + j, x + i] != 0)
+                    if (Respawn_Enemy.MAP[y + j, x + i] != 0)
                         return true;
                 }
             }
@@ -346,7 +348,7 @@ public class Enemy : MonoBehaviour
         }
         else if (HOW == 1)
         {
-            if (res.MAP[y, x] != 0)
+            if (Respawn_Enemy.MAP[y, x] != 0)
                 return true;
             return false;
         }
@@ -361,10 +363,10 @@ public class Enemy : MonoBehaviour
             // 상하좌우 범위를 벗어나지 않고, 벽이 아니면서, 닫힌리스트에 없다면
             if (checkX >= bottomLeft.x && checkX < topRight.x + 1 && checkY < bottomLeft.z + 1 && checkY >= topRight.z && !NodeArray[checkY, checkX].isWall && !ClosedList.Contains(NodeArray[checkY, checkX]))
             {
-                if (res.MAP[checkY, checkX] == 5 && Trigger)
+                if (Respawn_Enemy.MAP[checkY, checkX] == 5 && Trigger)
                 {
                     TargetNode = NodeArray[checkY, checkX];
-                    Debug.Log("Enemy 이동거리 변경 : " + checkY + "," + checkX);
+                    //Debug.Log("Enemy 이동거리 변경 : " + checkY + "," + checkX);
                     Trigger = false;
                 }
                 // 이웃노드에 넣고, 직선은 10, 대각선은 14비용(사용 안함)
@@ -398,8 +400,8 @@ public class Enemy : MonoBehaviour
                     for (int dx = -3; dx < 4; dx++)
                     {
                         if (dx == 3 || dx == -3 || dy == 3 || dy == -3)
-                            if (res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -3 && dy == -3) || (dx == 3 && dy == -3) || (dx == -3 && dy == 3) || (dx == 3 && dy == 3)))
-                                res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                            if (Respawn_Enemy.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -3 && dy == -3) || (dx == 3 && dy == -3) || (dx == -3 && dy == 3) || (dx == 3 && dy == 3)))
+                                Respawn_Enemy.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
                 return 3;
@@ -411,8 +413,8 @@ public class Enemy : MonoBehaviour
                     for (int dx = -2; dx < 3; dx++)
                     {
                         if (dx == 2 || dx == -2 || dy == 2 || dy == -2)
-                            if (res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -2 && dy == -2) || (dx == 2 && dy == -2) || (dx == -2 && dy == 2) || (dx == 2 && dy == 2)))
-                                res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                            if (Respawn_Enemy.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -2 && dy == -2) || (dx == 2 && dy == -2) || (dx == -2 && dy == 2) || (dx == 2 && dy == 2)))
+                                Respawn_Enemy.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
                 return 2; 
@@ -424,8 +426,8 @@ public class Enemy : MonoBehaviour
                     for (int dx = -1; dx < 2; dx++)
                     {
                         if (dx == 1 || dx == -1 || dy == 1 || dy == -1)
-                            if (res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -1 && dy == -1) || (dx == 1 && dy == -1) || (dx == -1 && dy == 1) || (dx == 1 && dy == 1)))
-                                res.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
+                            if (Respawn_Enemy.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] == 0 && !((dx == -1 && dy == -1) || (dx == 1 && dy == -1) || (dx == -1 && dy == 1) || (dx == 1 && dy == 1)))
+                                Respawn_Enemy.MAP[Rand_Pos_z + dy, Rand_Pos_x + dx] = 5;
                     }
                 }
                 return 1;
@@ -442,9 +444,9 @@ public class Enemy : MonoBehaviour
                 for (int dx = -2; dx < 3; dx++)
                 {
                     if (dy == 0 && dx == 0)
-                        res.MAP[y + dy, x + dx] = 8;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 8;
                     else
-                        res.MAP[y + dy, x + dx] = 7;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 7;
                 }
             }
         }
@@ -455,19 +457,19 @@ public class Enemy : MonoBehaviour
                 for (int dx = -1; dx < 2; dx++)
                 {
                     if (dy == 0 && dx == 0)
-                        res.MAP[y + dy, x + dx] = 8;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 8;
                     else
-                        res.MAP[y + dy, x + dx] = 7;
+                        Respawn_Enemy.MAP[y + dy, x + dx] = 7;
                 }
             }
         }
         else if(HOW == 1)
         {
-            res.MAP[y, x] = 8;
+            Respawn_Enemy.MAP[y, x] = 8;
         }
         else
         {
-            res.MAP[y, x] = 9;
+            Respawn_Enemy.MAP[y, x] = 9;
         }
     }
     public void ShowMap()
@@ -477,9 +479,9 @@ public class Enemy : MonoBehaviour
         {
             for (int j = 0; j < 20; j++)
             {
-                a1 = a1 + res.MAP[j, i];
+                a1 = a1 + Respawn_Enemy.MAP[j, i];
             }
-            Debug.Log(a1);
+           //Debug.Log(a1);
             a1 = "";
         }
     }

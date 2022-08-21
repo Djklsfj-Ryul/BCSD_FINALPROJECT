@@ -15,10 +15,9 @@ public class Full_System : MonoBehaviour
 
     public static bool player_move = true;
 
-    private static Respawn_Player res_P;
-    private static Respawn_Enemy res_E;
+    public static Respawn_Player res_P;
+    public static Respawn_Enemy res_E;
 
-    public GameObject player;
     Enemy sys_e;
 
     void Start()
@@ -35,13 +34,19 @@ public class Full_System : MonoBehaviour
     {
         if (Stamina_Player == 0 && Turn != 0)
         {
-            Debug.Log("턴을 종료합니다.");
             player_move = false;
-            sys_e.Enemy_Move();
-            Turn--;
-            Point_Check();
-            Stamina_Player = 30;
-            Stamina_Enemy  = 50;
+            if(Enemy.em)
+            {
+                Debug.Log("턴을 종료합니다.");
+                Turn--;
+                Point_Check();
+                Stamina_Player = 30;
+                Stamina_Enemy = 50;
+                Debug.Log("##############");
+                Debug.Log("내 점수 : " + player_point);
+                Debug.Log("적 점수 : " + enemy_point);
+                player_move = true;
+            }
         }
         else if (Stamina_Player == 0 && Turn == 0)
         {
@@ -56,9 +61,31 @@ public class Full_System : MonoBehaviour
     }
     void Point_Check()
     {
-        if (res_P.MAP[(int)res_E.Instant_Enemy.gameObject.transform.position.z, (int)res_E.Instant_Enemy.gameObject.transform.position.x] != 0)
+        Debug.Log("플레이어 맵");
+        string a1 = "";
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                a1 = a1 + Respawn_Player.MAP[j, i];
+            }
+            Debug.Log(a1);
+            a1 = "";
+        }
+        Debug.Log("적 맵");
+        string a2 = "";
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                a2 = a2 + Respawn_Enemy.MAP[j, i];
+            }
+            Debug.Log(a2);
+            a2 = "";
+        }
+        if (Respawn_Player.MAP[Enemy.Pos_z, Enemy.Pos_x] != 0)
             player_point += 1;
-        if (res_E.MAP[(int)Mathf.Ceil(player.gameObject.transform.position.z), (int)Mathf.Ceil(player.gameObject.transform.position.x)] != 0)
+        if (Respawn_Enemy.MAP[Player.posz, Player.posx] != 0)
             enemy_point += 1;
     }
 }
