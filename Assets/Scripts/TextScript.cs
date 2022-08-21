@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class TextScript : MonoBehaviour
 {
+    public Text TextScore;
+    public Text PlayerSc;
+    public Text EnemySc;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +18,23 @@ public class TextScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Full_System.player_point > Full_System.enemy_point)
+        {
+            EnemySc.text = string.Format($"{ Full_System.enemy_point}");
+            PlayerSc.text = string.Format($"{ Full_System.player_point}");
+            TextScore.text = "Player Win";
+        }
+        else if (Full_System.player_point < Full_System.enemy_point)
+        {
+            EnemySc.text = string.Format($"{ Full_System.enemy_point}");
+            PlayerSc.text = string.Format($"{ Full_System.player_point}");
+            TextScore.text = "Enemy Win";
+        }
+        else
+        {
+            EnemySc.text = string.Format($"{ Full_System.enemy_point}");
+            PlayerSc.text = string.Format($"{ Full_System.player_point}");
+            TextScore.text = "Draw";
+        }
     }
 }

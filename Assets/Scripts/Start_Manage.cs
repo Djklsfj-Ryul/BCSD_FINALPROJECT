@@ -6,7 +6,6 @@ public class Start_Manage : MonoBehaviour
 {
     public GameObject CoverImage;
     public GameObject Camera;
-    public GameObject Camera_Finish;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +24,8 @@ public class Start_Manage : MonoBehaviour
     {
         if(Full_System.finish && tri)
         {
-            Camera_Finish.SetActive(true);
+            Camera.GetComponent<RectTransform>().anchoredPosition = new Vector3(1500,0,-350);
+            Camera.SetActive(true);
             tri = false;
         }
     }

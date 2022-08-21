@@ -13,8 +13,8 @@ public class Full_System : MonoBehaviour
     public static int Phase = 3;
     public int Turn = 2;
 
-    public int player_point = 0;
-    public int enemy_point = 0;
+    public static int player_point = 0;
+    public static int enemy_point = 0;
 
     public static bool player_move = true;
 
@@ -58,7 +58,7 @@ public class Full_System : MonoBehaviour
             Phase--;
             Turn = 3;
         }
-        else if(Phase == 0)
+        else if(Phase == 0 && !finish)
         {
             Debug.Log("게임을 종료합니다.");
             finish = true;
@@ -66,28 +66,6 @@ public class Full_System : MonoBehaviour
     }
     void Point_Check()
     {
-        Debug.Log("플레이어 맵");
-        string a1 = "";
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-                a1 = a1 + Respawn_Player.MAP[j, i];
-            }
-            Debug.Log(a1);
-            a1 = "";
-        }
-        Debug.Log("적 맵");
-        string a2 = "";
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
-            {
-                a2 = a2 + Respawn_Enemy.MAP[j, i];
-            }
-            Debug.Log(a2);
-            a2 = "";
-        }
         if (Respawn_Player.MAP[Enemy.Pos_z, Enemy.Pos_x] != 0)
             player_point += 1;
         if (Respawn_Enemy.MAP[Player.posz, Player.posx] != 0)

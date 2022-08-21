@@ -49,6 +49,7 @@ public class Respawn_Enemy : MonoBehaviour
     static int MAP_X = 20;
     static int MAP_Z = 20;
     public static int[,] MAP = new int[MAP_X, MAP_Z];
+    public static int[,] MAP2 = new int[MAP_X, MAP_Z];
 
     public bool Phase_3 = true;
     public bool Phase_2 = true;
@@ -75,6 +76,7 @@ public class Respawn_Enemy : MonoBehaviour
         {
             Phase_3 = false;
             Random_Respawn_E();
+            MAP2 = MAP;
         }
         if (Full_System.Phase == 2 && Phase_2)
         {
@@ -82,6 +84,7 @@ public class Respawn_Enemy : MonoBehaviour
             Phase_2 = false;
             Clear();
             Random_Respawn_E1();
+            MAP2 = MAP;
         }
         if (Full_System.Phase == 1 && Phase_1)
         {
@@ -89,6 +92,7 @@ public class Respawn_Enemy : MonoBehaviour
             Phase_1 = false;
             Clear();
             Random_Respawn_E2();
+            MAP2 = MAP;
         }
     }
     void Clear()

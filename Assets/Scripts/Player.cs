@@ -1,18 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     public static int posx = 0;
     public static int posy = 0;
     public static int posz = 0;
+    public GameObject STAMINA;
+    public int[,] Phase_Map = new int[20,20];
+    public GameObject MAP_IMAGE;
 
     bool Pick = false;
     RaycastHit hit;
 
     public GameObject Main_Camera;
     GameObject PickUpObject;
+    public Text MyScore;
+    public Text EnScore;
     private static Respawn_Player therespawn;
     public static Enemy therespawn_E;
 
@@ -24,6 +30,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         Player_Move();
+        Drawing_Map();
+
+        EnScore.text = string.Format($"{ Full_System.enemy_point}");
+        MyScore.text = string.Format($"{ Full_System.player_point}");
+
         if (Input.GetKeyDown(KeyCode.Space) && !Pick)
             Pick_Up();
         else if (Input.GetKeyDown(KeyCode.Space) && Pick)
@@ -32,6 +43,17 @@ public class Player : MonoBehaviour
         {
             Main_Camera.SetActive(false);
         }
+    }
+    void Drawing_Map()
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+
+            }
+        }
+        MAP_IMAGE.GetComponent<RectTransform>().anchoredPosition = new Vector3(1500, 0, -350);
     }
     void Player_Move()
     {
@@ -144,6 +166,7 @@ public class Player : MonoBehaviour
                 Full_System.Stamina_Player = 0;
             }
         }
+        STAMINA.GetComponent<Slider>().value = Full_System.Stamina_Player;
         /*
         if (Input.GetKeyDown(KeyCode.R))
         {
