@@ -19,7 +19,7 @@ public class Respawn_Enemy : MonoBehaviour
     public Vector3[] Rand_Pos = new Vector3[20];
     public Array[] Manage = new Array[Count_Big + Count_Medium + Count_Small + Count_Enemy];
 
-    public int Count_num = 0;
+    public static int Count_num = 0;
     static public int Catridge_Big    = 2;
     static public int Catridge_Medium = 2;
     static public int Catridge_Small  = 1;
@@ -50,6 +50,10 @@ public class Respawn_Enemy : MonoBehaviour
     static int MAP_Z = 20;
     public static int[,] MAP = new int[MAP_X, MAP_Z];
 
+    public bool Phase_3 = true;
+    public bool Phase_2 = true;
+    public bool Phase_1 = true;
+
     int range_X = 0;
     int range_Z = 0;
     private Vector3 RandomPostion = new Vector3(0f, 5.0f, 0f);
@@ -67,10 +71,23 @@ public class Respawn_Enemy : MonoBehaviour
     }
     private void Update()
     {
-        if (!CoverImage.activeSelf)
+        if (!CoverImage.activeSelf && Phase_3)
+        {
+            Phase_3 = false;
             Random_Respawn_E();
-        if (Enemy.em && Full_System.player_move)
+        }
+        if (Full_System.Phase == 2 && Phase_2)
+        {
+            Phase_2 = false;
             Clear();
+            Random_Respawn_E1();
+        }
+        if (Full_System.Phase == 1 && Phase_1)
+        {
+            Phase_1 = false;
+            Clear();
+            Random_Respawn_E2();
+        }
     }
     void Clear()
     {
@@ -88,6 +105,10 @@ public class Respawn_Enemy : MonoBehaviour
         Destroy(manage[1, 1]);
         Destroy(manage[1, 2]);
         Destroy(Instant_Enemy);
+        Trigger[0] = true;
+        Trigger[1] = true;
+        Trigger[2] = true;
+        Trigger[3] = true;
     }
     void Random_Respawn_E()
     { 
@@ -143,6 +164,154 @@ public class Respawn_Enemy : MonoBehaviour
                     Count_num++;
                     //yield return new WaitForSeconds(1f);
                     
+                }
+                Trigger[2] = false;
+            }
+            else if (Trigger[3] == true)
+            {
+                for (int i = 0; i < Count_Enemy; i++)
+                {
+                    int d = Random.Range(0, Catridge_Enemy);
+                    int rand_d = Random.Range(1, 5);
+                    rand_d *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Enemy = Instantiate(Object_Enemy[d], Rand_Pos[Count_num], quaternion);
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+                }
+                Trigger[3] = false;
+            }
+        }
+    }
+    void Random_Respawn_E1()
+    {
+        while (Trigger[3] == true)
+        {
+            if (Trigger[0] == true)
+            {
+                for (int i = 0; i < Count_Big; i++)
+                {
+                    int a = Random.Range(0, Catridge_Big);
+                    int rand_a = Random.Range(1, 5);
+                    rand_a *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Big = Instantiate(Object_Big[a], Rand_Pos[Count_num], quaternion);
+                    /*
+                    Manage[Count_num].Collect = Object_Big[a];
+                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
+                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z;
+                    */
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+                }
+                Trigger[0] = false;
+            }
+            else if (Trigger[1] == true)
+            {
+                for (int i = 0; i < Count_Medium; i++)
+                {
+                    int b = Random.Range(0, Catridge_Medium);
+                    int rand_b = Random.Range(1, 5);
+                    rand_b *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
+                    manage[0, i] = Instant_Medium;
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+                }
+                Trigger[1] = false;
+            }
+            else if (Trigger[2] == true)
+            {
+                for (int i = 0; i < Count_Small; i++)
+                {
+                    int c = Random.Range(0, Catridge_Small);
+                    int rand_c = Random.Range(1, 5);
+                    rand_c *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
+                    manage[1, i] = Instant_Small;
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+
+                }
+                Trigger[2] = false;
+            }
+            else if (Trigger[3] == true)
+            {
+                for (int i = 0; i < Count_Enemy; i++)
+                {
+                    int d = Random.Range(0, Catridge_Enemy);
+                    int rand_d = Random.Range(1, 5);
+                    rand_d *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, 0, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Enemy = Instantiate(Object_Enemy[d], Rand_Pos[Count_num], quaternion);
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+                }
+                Trigger[3] = false;
+            }
+        }
+    }
+    void Random_Respawn_E2()
+    {
+        while (Trigger[3] == true)
+        {
+            if (Trigger[0] == true)
+            {
+                for (int i = 0; i < Count_Big; i++)
+                {
+                    int a = Random.Range(0, Catridge_Big);
+                    int rand_a = Random.Range(1, 5);
+                    rand_a *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_a, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Big = Instantiate(Object_Big[a], Rand_Pos[Count_num], quaternion);
+                    /*
+                    Manage[Count_num].Collect = Object_Big[a];
+                    Manage[Count_num].x = (int)Rand_Pos[Count_num].x;
+                    Manage[Count_num].y = (int)Rand_Pos[Count_num].z;
+                    */
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+                }
+                Trigger[0] = false;
+            }
+            else if (Trigger[1] == true)
+            {
+                for (int i = 0; i < Count_Medium; i++)
+                {
+                    int b = Random.Range(0, Catridge_Medium);
+                    int rand_b = Random.Range(1, 5);
+                    rand_b *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_b, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Medium = Instantiate(Object_Medium[b], Rand_Pos[Count_num], quaternion);
+                    manage[0, i] = Instant_Medium;
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+                }
+                Trigger[1] = false;
+            }
+            else if (Trigger[2] == true)
+            {
+                for (int i = 0; i < Count_Small; i++)
+                {
+                    int c = Random.Range(0, Catridge_Small);
+                    int rand_c = Random.Range(1, 5);
+                    rand_c *= 90;
+                    Quaternion quaternion = Quaternion.Euler(new Vector3(0, rand_c, 0));
+                    Rand_Pos[Count_num] = Return_RandomPosition();
+                    Instant_Small = Instantiate(Object_Small[c], Rand_Pos[Count_num], quaternion);
+                    manage[1, i] = Instant_Small;
+                    Count_num++;
+                    //yield return new WaitForSeconds(1f);
+
                 }
                 Trigger[2] = false;
             }

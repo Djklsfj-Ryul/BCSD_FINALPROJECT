@@ -31,12 +31,13 @@ public class Enemy : MonoBehaviour
 
     bool Pick_Up = false;
     bool Trigger = true;
-    bool plmove = true;
+    //public static bool plmove = true;
     int Rand_Pos;
     int sizeX, sizeY;
     int x, y;
     public static int Pos_x, Pos_z;
     int Rand_Pos_x, Rand_Pos_z;
+    public static bool enemymove = true;
 
     Node[,] NodeArray;
     Node StartNode, TargetNode, CurNode;
@@ -48,17 +49,18 @@ public class Enemy : MonoBehaviour
     }
     public void Update()
     {
-        if(!Full_System.player_move && plmove)
+        if(!Full_System.player_move)
         {
+            Debug.Log("#############################################");
             Enemy_Move();
-            plmove = false;
             em = true;
+            Respawn_Enemy.Count_num = 0;
         }
     }
     public void Enemy_Move()
     {
         Debug.Log("¿òÁ÷ÀÓ");
-        Rand_Pos = Random.Range(0, res.Count_num - 2);
+        Rand_Pos = Random.Range(0, Respawn_Enemy.Count_num - 2);
         if (Full_System.Stamina_Enemy != 0)
         {
             PathFinding((int)res.Rand_Pos[Rand_Pos].x, (int)res.Rand_Pos[Rand_Pos].z);
@@ -208,9 +210,9 @@ public class Enemy : MonoBehaviour
                     Rand_Pos_x = xx;
                     Rand_Pos_z = zz;
                     Full_System.Stamina_Enemy -= FinalNodeList.Count;
-                    res.Rand_Pos[res.Count_num - 1].z = TargetNode.y;
-                    res.Rand_Pos[res.Count_num - 1].x = TargetNode.x;
-                    Respawn_Enemy.MAP[(int)res.Rand_Pos[res.Count_num - 1].z, (int)res.Rand_Pos[res.Count_num - 1].x] = 9;
+                    res.Rand_Pos[Respawn_Enemy.Count_num - 1].z = TargetNode.y;
+                    res.Rand_Pos[Respawn_Enemy.Count_num - 1].x = TargetNode.x;
+                    Respawn_Enemy.MAP[(int)res.Rand_Pos[Respawn_Enemy.Count_num - 1].z, (int)res.Rand_Pos[Respawn_Enemy.Count_num - 1].x] = 9;
                 }
                 else if(HOW == 3)
                 {
@@ -391,7 +393,7 @@ public class Enemy : MonoBehaviour
     }
     int Distinguish(int Rand_Pos_z, int Rand_Pos_x, int Random)
     {
-        for (int i = 0; i < res.Count_num - 1; i++)
+        for (int i = 0; i < Respawn_Enemy.Count_num - 1; i++)
         {
             if (Rand_Pos < Respawn_Enemy.Count_Big)
             {
